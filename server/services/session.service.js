@@ -15,6 +15,8 @@ const populateSession = (query) =>
   query
     .populate('proposedBy', 'name username profileImage')
     .populate('participants', 'name username profileImage')
+    .populate('reschedulingHistory.proposedBy', 'name username profileImage')
+    .populate('reschedulingHistory.resolvedBy', 'name username profileImage')
     .populate({
       path: 'exchangeRequest',
       select: 'sender recipient offeredSkill requestedSkill status createdAt',
