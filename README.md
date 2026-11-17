@@ -49,8 +49,10 @@ SkillSwap is a full-stack application scaffold built as an npm workspaces monore
 | `CLIENT_ORIGIN` | No | `http://localhost:5173` | Allowed origin for CORS |
 | `RATE_LIMIT_WINDOW_MS` | No | `900000` | Rate-limit window in milliseconds |
 | `RATE_LIMIT_MAX` | No | `100` | Maximum requests per window per IP |
-| `JWT_SECRET` | No | none | Reserved for future authentication; supply your own secret |
-| `JWT_EXPIRES_IN` | No | `7d` | Reserved for future authentication |
+| `AUTH_RATE_LIMIT_MAX` | No | `10` | Maximum registration/login requests per window per IP |
+| `JWT_SECRET` | Production only | none | Secret used to sign access tokens; required in production |
+| `JWT_EXPIRES_IN` | No | `7d` | Access token lifetime |
+| `BCRYPT_SALT_ROUNDS` | No | `12` | Password hashing cost |
 
 ### Client (`client/.env`)
 
