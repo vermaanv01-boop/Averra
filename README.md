@@ -127,4 +127,4 @@ skillswap/
     └── validators/         Input and environment validation
 ```
 
-This repository intentionally contains only infrastructure and placeholder folders; application features are added later.
+The backend core (authentication, profiles, skills, discovery, and exchange requests) is implemented. The frontend remains a minimal foundation.
