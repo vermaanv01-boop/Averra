@@ -29,16 +29,6 @@ const getOwnedSkill = async (userId, skillId) => {
   return skill
 }
 
-const getTeachSkill = async (userId, skillId) => {
-  const skill = await Skill.findOne({ _id: skillId, user: userId, type: 'teach' })
-
-  if (!skill) {
-    throw new AppError('Teach skill not found', 404)
-  }
-
-  return skill
-}
-
 const create = async (userId, data) => {
   const normalizedName = normalizeName(data.name)
   const duplicate = await Skill.exists({ user: userId, normalizedName, type: data.type })
