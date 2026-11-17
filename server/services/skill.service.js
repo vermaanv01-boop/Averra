@@ -92,4 +92,4 @@ const remove = async (userId, skillId) => {
   return skill
 }
 
-module.exports = { listByUser, getOwnedSkill, getTeachSkill, create, update, remove }
+module.exports = { listByUser, getOwnedSkill, create, update, remove }
