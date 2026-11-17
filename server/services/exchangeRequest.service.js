@@ -74,7 +74,7 @@ const getByIdForUser = async (userId, requestId) => {
     throw new AppError('Exchange request not found', 404)
   }
 
-  return request
+  return toRequestDto(request)
 }
 
 const create = async (senderId, { recipientId, offeredSkillId, requestedSkillId }) => {
