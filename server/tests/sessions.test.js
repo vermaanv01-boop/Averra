@@ -415,7 +415,9 @@ describe('Rescheduling', () => {
     await acceptSession(firstPair.secondUser.token, firstSession.id)
 
     const secondPair = await createAcceptedPair(firstPair.firstUser, 'c12')
-    const secondSession = await proposeSession(secondPair.secondUser.token, secondPair.requestId)
+    const secondSession = await proposeSession(secondPair.secondUser.token, secondPair.requestId, {
+      startTime: '17:00'
+    })
     await acceptSession(firstPair.firstUser.token, secondSession.id)
 
     const conflict = await request(app)
