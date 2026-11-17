@@ -320,7 +320,7 @@ describe('Session responses and conflicts', () => {
     const firstSession = await proposeSession(firstPair.firstUser.token, firstPair.requestId)
     await acceptSession(firstPair.secondUser.token, firstSession.id)
 
-    const secondPair = await createAcceptedPair(firstPair.firstUser, 'b9')
+    const secondPair = await createAcceptedPair(firstPair.firstUser, 'c9')
     const secondSession = await proposeSession(secondPair.secondUser.token, secondPair.requestId, {
       timezone: 'Europe/London',
       startTime: '15:00',
