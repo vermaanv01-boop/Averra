@@ -100,6 +100,22 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 | `PATCH` | `/api/exchange-requests/:id/reject` | Yes | Reject an incoming pending request |
 | `PATCH` | `/api/exchange-requests/:id/cancel` | Yes | Cancel an outgoing pending request |
 | `PATCH` | `/api/exchange-requests/:id/complete` | Yes | Complete an accepted request |
+| `POST` | `/api/sessions` | Yes | Propose a session for an accepted exchange request |
+| `GET` | `/api/sessions` | Yes | List sessions with status, date-range, sort, and pagination filters |
+| `GET` | `/api/sessions/upcoming` | Yes | List confirmed or awaiting-reschedule future sessions |
+| `GET` | `/api/sessions/pending-invitations` | Yes | List pending proposals received by the user |
+| `GET` | `/api/sessions/completed` | Yes | List completed sessions |
+| `GET` | `/api/sessions/cancelled` | Yes | List cancelled sessions |
+| `GET` | `/api/sessions/:id` | Yes | Get a session the user participates in |
+| `PATCH` | `/api/sessions/:id/accept` | Yes | Accept a pending session proposal |
+| `PATCH` | `/api/sessions/:id/decline` | Yes | Decline a pending session proposal |
+| `POST` | `/api/sessions/:id/reschedule-requests` | Yes | Propose a new date, time, duration, or timezone |
+| `PATCH` | `/api/sessions/:id/reschedule-requests/:proposalId/accept` | Yes | Accept a rescheduling proposal |
+| `PATCH` | `/api/sessions/:id/reschedule-requests/:proposalId/reject` | Yes | Reject a rescheduling proposal |
+| `PATCH` | `/api/sessions/:id/cancel` | Yes | Cancel an active session |
+| `PATCH` | `/api/sessions/:id/complete` | Yes | Mark a confirmed session as completed |
+
+Session proposals require an accepted exchange request and derive both participants from that request. Times are sent as a local `scheduledDate`, `startTime`, `duration`, and IANA `timezone`; the service stores `startAt`/`endAt` in UTC, rejects invalid or DST-nonexistent local times, and blocks overlapping confirmed sessions for the same participants.
 
 ## Project structure
 
