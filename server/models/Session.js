@@ -163,7 +163,8 @@ const sessionSchema = new Schema(
     location: {
       type: String,
       default: '',
-      trim: true
+      trim: true,
+      maxlength: 200
     },
     status: {
       type: String,
