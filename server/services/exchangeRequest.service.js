@@ -177,7 +177,7 @@ const list = async (userId, query) => {
   ])
 
   return {
-    items,
+    items: items.map(toRequestDto),
     pagination: buildPagination(query.page, query.limit, total)
   }
 }
