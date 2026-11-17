@@ -11,4 +11,6 @@ const idParamSchema = z
   })
   .strict()
 
-module.exports = { objectIdSchema, idParamSchema }
+const emptyBodySchema = z.object({}).strict()
+
+module.exports = { objectIdSchema, idParamSchema, emptyBodySchema }
