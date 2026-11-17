@@ -113,9 +113,10 @@ const findSession = async (sessionId) => {
 }
 
 const assertParticipant = (session, userId) => {
-  const isParticipant = session.participants.some(
-    (participant) => participant.toString() === userId
-  )
+  const isParticipant = session.participants.some((participant) => {
+    const participantId = participant?._id ? participant._id.toString() : participant.toString()
+    return participantId === userId
+  })
 
   if (!isParticipant) {
     throw new AppError('Session not found', 404)
