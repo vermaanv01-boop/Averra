@@ -26,6 +26,40 @@ const populateRequest = (query) =>
     .populate('offeredSkill', 'name category proficiency type')
     .populate('requestedSkill', 'name category proficiency type')
 
+const toUserSummary = (user) =>
+  user
+    ? {
+        id: user._id.toString(),
+        name: user.name,
+        username: user.username,
+        profileImage: user.profileImage
+      }
+    : null
+
+const toSkillSummary = (skill) =>
+  skill
+    ? {
+        id: skill._id.toString(),
+        name: skill.name,
+        category: skill.category,
+        proficiency: skill.proficiency,
+        type: skill.type
+      }
+    : null
+
+const toRequestDto = (request) => ({
+  id: request._id.toString(),
+  sender: toUserSummary(request.sender),
+  recipient: toUserSummary(request.recipient),
+  offeredSkill: toSkillSummary(request.offeredSkill),
+  requestedSkill: toSkillSummary(request.requestedSkill),
+  status: request.status,
+  respondedAt: request.respondedAt,
+  completedAt: request.completedAt,
+  createdAt: request.createdAt,
+  updatedAt: request.updatedAt
+})
+
 const getByIdForUser = async (userId, requestId) => {
   const request = await populateRequest(ExchangeRequest.findById(requestId)).lean()
 
