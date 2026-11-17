@@ -54,6 +54,8 @@ skillSchema.index({ user: 1, normalizedName: 1, type: 1 }, { unique: true })
 skillSchema.index({ normalizedName: 1, category: 1, type: 1, proficiency: 1 })
 
 const removeVersion = (document, returnedObject) => {
+  returnedObject.id = returnedObject._id.toString()
+  delete returnedObject._id
   delete returnedObject.__v
   return returnedObject
 }
