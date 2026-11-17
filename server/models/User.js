@@ -1,0 +1,85 @@
+const { Schema, model } = require('mongoose')
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const usernamePattern = /^[a-z0-9_]+$/
+const urlPattern = /^https?:\/\/\S+$/i
+
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 80
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      minlength: 3,
+      maxlength: 30,
+      match: usernamePattern
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      match: emailPattern
+    },
+    passwordHash: {
+      type: String,
+      required: true,
+      select: false
+    },
+    profileImage: {
+      type: String,
+      default: '',
+      trim: true,
+      validate: {
+        validator: (value) => !value || urlPattern.test(value),
+        message: 'profileImage must be an http or https URL'
+      }
+    },
+    bio: {
+      type: String,
+      default: '',
+      trim: true,
+      maxlength: 500
+    },
+    location: {
+      type: String,
+      default: '',
+      trim: true,
+      maxlength: 120
+    },
+    interests: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: (values) =>
+          values.length <= 20 &&
+          values.every((value) => value.trim().length > 0 && value.length <= 50),
+        message: 'interests must contain at most 20 non-empty values of 50 characters or fewer'
+      }
+    }
+  },
+  { timestamps: true }
+)
+
+const removePrivateFields = (document, returnedObject) => {
+  delete returnedObject.passwordHash
+  delete returnedObject.__v
+  return returnedObject
+}
+
+userSchema.set('toJSON', { transform: removePrivateFields })
+userSchema.set('toObject', { transform: removePrivateFields })
+
+const User = model('User', userSchema)
+
+module.exports = User
