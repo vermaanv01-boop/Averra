@@ -143,4 +143,4 @@ skillswap/
     └── validators/         Input and environment validation
 ```
 
-The backend core (authentication, profiles, skills, discovery, and exchange requests) is implemented. The frontend remains a minimal foundation.
+The backend core (authentication, profiles, skills, discovery, exchange requests, and session scheduling) is implemented. The frontend remains a minimal foundation.
