@@ -53,24 +53,25 @@ const partsInZone = (date, timeZone) => {
 const localTimeToUtc = (scheduledDate, startTime, timeZone) => {
   const [year, month, day] = scheduledDate.split('-').map(Number)
   const [hour, minute] = startTime.split(':').map(Number)
-  let candidate = Date.UTC(year, month - 1, day, hour, minute)
+  const target = Date.UTC(year, month - 1, day, hour, minute)
+  let candidate = target
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const parts = partsInZone(new Date(candidate), timeZone)
-    const candidateAsUtc = Date.UTC(
+    const wallTimeAsUtc = Date.UTC(
       parts.year,
       parts.month - 1,
       parts.day,
       parts.hour,
       parts.minute
     )
-    const offset = candidateAsUtc - candidate
+    const nextCandidate = target - (wallTimeAsUtc - candidate)
 
-    if (offset === 0) {
+    if (nextCandidate === candidate) {
       break
     }
 
-    candidate -= offset
+    candidate = nextCandidate
   }
 
   const result = new Date(candidate)
