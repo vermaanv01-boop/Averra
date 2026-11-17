@@ -3,8 +3,21 @@ const AppError = require('../utils/AppError')
 
 const normalizeName = (name) => name.trim().toLowerCase()
 
-const listByUser = async (userId) =>
-  Skill.find({ user: userId }).sort({ createdAt: -1 }).lean()
+const toSkillDto = (skill) => ({
+  id: skill._id.toString(),
+  name: skill.name,
+  category: skill.category,
+  type: skill.type,
+  proficiency: skill.proficiency,
+  experience: skill.experience,
+  createdAt: skill.createdAt,
+  updatedAt: skill.updatedAt
+})
+
+const listByUser = async (userId) => {
+  const skills = await Skill.find({ user: userId }).sort({ createdAt: -1 }).lean()
+  return skills.map(toSkillDto)
+}
 
 const getOwnedSkill = async (userId, skillId) => {
   const skill = await Skill.findOne({ _id: skillId, user: userId })
