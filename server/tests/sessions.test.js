@@ -414,7 +414,7 @@ describe('Rescheduling', () => {
     const firstSession = await proposeSession(firstPair.firstUser.token, firstPair.requestId)
     await acceptSession(firstPair.secondUser.token, firstSession.id)
 
-    const secondPair = await createAcceptedPair(firstPair.firstUser, 'b12')
+    const secondPair = await createAcceptedPair(firstPair.firstUser, 'c12')
     const secondSession = await proposeSession(secondPair.secondUser.token, secondPair.requestId)
     await acceptSession(firstPair.firstUser.token, secondSession.id)
 
