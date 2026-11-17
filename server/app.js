@@ -26,6 +26,7 @@ app.use('/api/users', userRoutes)
 app.use('/api/skills', skillRoutes)
 app.use('/api/discovery', discoveryRoutes)
 app.use('/api/exchange-requests', exchangeRequestRoutes)
+app.use('/api/sessions', sessionRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
