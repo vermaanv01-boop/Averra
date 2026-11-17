@@ -72,12 +72,34 @@ Run these from the repository root:
 | `npm run build` | Create the production client build in `client/dist` |
 | `npm run start` | Start the Express server in production mode |
 | `npm run preview` | Preview the production client build locally |
+| `npm run test --workspace server` | Run the backend test suite against an in-memory MongoDB |
 
 ## API
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/health` | Returns server status, uptime, timestamp, and database state |
+Successful responses use `{ "success": true, "data": ... }`; errors use `{ "success": false, "message": ..., "details": ... }`.
+
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/health` | No | Server status, uptime, timestamp, and database state |
+| `POST` | `/api/auth/register` | No | Create an account and receive a token |
+| `POST` | `/api/auth/login` | No | Log in and receive a token |
+| `POST` | `/api/auth/logout` | Yes | Revoke the current token |
+| `GET` | `/api/users/me` | Yes | Get the authenticated user's profile |
+| `PATCH` | `/api/users/me` | Yes | Edit the authenticated user's profile |
+| `GET` | `/api/users/:username` | No | Get a public profile |
+| `GET` | `/api/skills` | Yes | List the authenticated user's skills |
+| `POST` | `/api/skills` | Yes | Add a teach or learn skill |
+| `PATCH` | `/api/skills/:id` | Yes | Edit one of the authenticated user's skills |
+| `DELETE` | `/api/skills/:id` | Yes | Delete one of the authenticated user's skills |
+| `GET` | `/api/discovery/users` | No | Search public profiles by skill, category, and proficiency |
+| `GET` | `/api/discovery/matches` | Yes | Find users who teach the current user's wanted skills |
+| `POST` | `/api/exchange-requests` | Yes | Send an exchange request |
+| `GET` | `/api/exchange-requests` | Yes | List incoming, outgoing, or all requests |
+| `GET` | `/api/exchange-requests/:id` | Yes | Get a request the user participates in |
+| `PATCH` | `/api/exchange-requests/:id/accept` | Yes | Accept an incoming pending request |
+| `PATCH` | `/api/exchange-requests/:id/reject` | Yes | Reject an incoming pending request |
+| `PATCH` | `/api/exchange-requests/:id/cancel` | Yes | Cancel an outgoing pending request |
+| `PATCH` | `/api/exchange-requests/:id/complete` | Yes | Complete an accepted request |
 
 ## Project structure
 
