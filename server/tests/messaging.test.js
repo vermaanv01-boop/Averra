@@ -613,6 +613,13 @@ describe('Socket.IO', () => {
 
     const recipientSocket = createSocket(recipient.token)
     await waitConnected(recipientSocket)
+    const outsider = await registerUser('tenoutsider')
+    const outsiderSocket = createSocket(outsider.token)
+    await waitConnected(outsiderSocket)
+    let outsiderOnlineEvents = 0
+    outsiderSocket.on('presence:online', () => {
+      outsiderOnlineEvents += 1
+    })
 
     let onlineEvents = 0
     recipientSocket.on('presence:online', (payload) => {
