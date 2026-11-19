@@ -509,7 +509,7 @@ describe('Socket.IO', () => {
   })
 
   it('broadcasts edit, delete and read events', async () => {
-    const { sender, recipient } = await createPair('eight-events')
+    const { sender, recipient } = await createPair('eightevents')
     const conversation = await conversationFor(sender.token)
 
     const senderSocket = createSocket(sender.token)
