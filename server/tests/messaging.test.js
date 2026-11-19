@@ -508,6 +508,72 @@ describe('Socket.IO', () => {
     assert.equal(await Message.countDocuments({ conversation: conversation.id }), 1)
   })
 
+  it('broadcasts edit, delete and read events', async () => {
+    const { sender, recipient } = await createPair('eight-events')
+    const conversation = await conversationFor(sender.token)
+
+    const senderSocket = createSocket(sender.token)
+    const recipientSocket = createSocket(recipient.token)
+    await Promise.all([waitConnected(senderSocket), waitConnected(recipientSocket)])
+
+    const created = await emitAck(senderSocket, 'message:send', {
+      conversationId: conversation.id,
+      content: 'Edit me',
+      clientMessageId: 'events-key-1'
+    })
+    assert.equal(created.ok, true)
+    const messageId = created.message.id
+
+    const updated = onceEvent(recipientSocket, 'message:updated')
+    const edited = await request(app)
+      .patch(`/api/messages/${messageId}`)
+      .set(auth(sender.token))
+      .send({ content: 'Edited via REST' })
+    assert.equal(edited.status, 200)
+    assert.equal((await updated).content, 'Edited via REST')
+
+    const read = onceEvent(senderSocket, 'message:read')
+    const readAck = await emitAck(recipientSocket, 'message:read', {
+      conversationId: conversation.id,
+      messageId
+    })
+    assert.equal(readAck.ok, true)
+    assert.deepEqual(readAck.messageIds, [messageId])
+    assert.equal((await read).messageId, messageId)
+
+    const deleted = onceEvent(recipientSocket, 'message:deleted')
+    const removed = await request(app)
+      .delete(`/api/messages/${messageId}`)
+      .set(auth(sender.token))
+    assert.equal(removed.status, 200)
+    assert.equal((await deleted).id, messageId)
+  })
+
+  it('applies the message rate limit to socket sends', async () => {
+    const { sender } = await createPair('eight-rate')
+    const conversation = await conversationFor(sender.token)
+
+    const senderSocket = createSocket(sender.token)
+    await waitConnected(senderSocket)
+
+    for (let index = 1; index <= 5; index += 1) {
+      const result = await emitAck(senderSocket, 'message:send', {
+        conversationId: conversation.id,
+        content: `Socket rate ${index}`,
+        clientMessageId: `socket-rate-${index}`
+      })
+      assert.equal(result.ok, true)
+    }
+
+    const limited = await emitAck(senderSocket, 'message:send', {
+      conversationId: conversation.id,
+      content: 'Socket rate 6',
+      clientMessageId: 'socket-rate-6'
+    })
+    assert.equal(limited.ok, false)
+    assert.equal(limited.code, 429)
+  })
+
   it('broadcasts typing indicators with automatic expiry', async () => {
     const { sender, recipient } = await createPair('nine')
     const conversation = await conversationFor(sender.token)
