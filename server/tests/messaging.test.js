@@ -169,6 +169,7 @@ before(async () => {
   messagingService = require('../services/messaging.service')
   messageRateLimit = require('../services/messageRateLimit.service')
   const { initSocket, closeSocket } = require('../socket')
+  closeMessagingSocket = closeSocket
 
   await mongoose.connect(mongoServer.getUri())
   await Promise.all([
