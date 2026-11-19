@@ -50,6 +50,8 @@ SkillSwap is a full-stack application scaffold built as an npm workspaces monore
 | `RATE_LIMIT_WINDOW_MS` | No | `900000` | Rate-limit window in milliseconds |
 | `RATE_LIMIT_MAX` | No | `100` | Maximum requests per window per IP |
 | `AUTH_RATE_LIMIT_MAX` | No | `10` | Maximum registration/login requests per window per IP |
+| `MESSAGE_RATE_LIMIT_WINDOW_MS` | No | `60000` | Message rate-limit window in milliseconds |
+| `MESSAGE_RATE_LIMIT_MAX` | No | `30` | Maximum messages a user may send per message window (REST and Socket.IO) |
 | `JWT_SECRET` | Production only | none | Secret used to sign access tokens; required in production |
 | `JWT_EXPIRES_IN` | No | `7d` | Access token lifetime |
 | `BCRYPT_SALT_ROUNDS` | No | `12` | Password hashing cost |
