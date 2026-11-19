@@ -10,6 +10,8 @@ const skillRoutes = require('./routes/skill.routes')
 const discoveryRoutes = require('./routes/discovery.routes')
 const exchangeRequestRoutes = require('./routes/exchangeRequest.routes')
 const sessionRoutes = require('./routes/session.routes')
+const conversationRoutes = require('./routes/conversation.routes')
+const messageRoutes = require('./routes/message.routes')
 const { notFound, errorHandler } = require('./middleware/errorHandler')
 
 const app = express()
