@@ -1,6 +1,5 @@
 const { Server } = require('socket.io')
 const config = require('../config/env')
-const Conversation = require('../models/Conversation')
 const authenticateSocket = require('./auth')
 const presence = require('./presence')
 const typing = require('./typing')
@@ -33,16 +32,9 @@ const initSocket = (server) => {
 
   io.on('connection', async (socket) => {
     const user = socket.data.user
-
-    try {
-      const conversations = await Conversation.find({ participants: user.id })
-        .select('_id')
-        .lean()
-      for (const conversation of conversations) {
-        socket.join(events.conversationRoom(conversation._id.toString()))
-      }
-      await presence.add(socket)
-    } catch {}
+    for (const conversationId of socket.data.conversationIds || []) {
+      socket.join(events.conversationRoom(conversationId))
+    }
 
     const joinRoom = async (payload, callback, leave = false) => {
       const data = parse(joinConversationSchema, payload)
@@ -137,6 +129,13 @@ const initSocket = (server) => {
       typing.clearUser(user.id)
       Promise.resolve(presence.remove(socket)).catch(() => {})
     })
+
+    const initialize = async () => {
+      try {
+        await presence.add(socket)
+      } catch {}
+    }
+    initialize()
   })
 
   return io

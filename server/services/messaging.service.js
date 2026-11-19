@@ -203,7 +203,7 @@ const listMessages = async (userId, conversationId, { page, limit }) => {
   const [messages, total] = await Promise.all([
     Message.find(filter)
       .populate('sender', 'name username profileImage')
-      .sort({ createdAt: -1, _id: -1 })
+      .sort({ createdAt: 1, _id: 1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .lean(),
@@ -211,7 +211,7 @@ const listMessages = async (userId, conversationId, { page, limit }) => {
   ])
 
   return {
-    messages: messages.reverse().map(toMessageDto),
+    messages: messages.map(toMessageDto),
     pagination: buildPagination(page, limit, total)
   }
 }

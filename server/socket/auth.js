@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const config = require('../config/env')
 const User = require('../models/User')
+const Conversation = require('../models/Conversation')
 const { isTokenRevoked } = require('../services/auth.service')
 
 const extractToken = (handshake) => {
@@ -28,12 +29,17 @@ const authenticateSocket = async (socket, next) => {
       throw new Error('Unauthorized')
     }
 
+    const conversations = await Conversation.find({ participants: user._id })
+      .select('_id')
+      .lean()
+
     socket.data.user = {
       id: user._id.toString(),
       name: user.name,
       username: user.username,
       profileImage: user.profileImage
     }
+    socket.data.conversationIds = conversations.map((conversation) => conversation._id.toString())
     next()
   } catch {
     next(new Error('Unauthorized'))
