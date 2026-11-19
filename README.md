@@ -161,7 +161,7 @@ Server to client:
 | `presence:online` | `{ userId }` | An authorized contact came online |
 | `presence:offline` | `{ userId }` | An authorized contact went offline after their final socket disconnected |
 
-Presence and typing are in-memory only and are never written to MongoDB. multiple connections per user are supported. Message sending is rate-limited per user across both REST and Socket.IO.
+Presence and typing are in-memory only and are never written to MongoDB. Multiple connections per user are supported. Message sending is rate-limited per user across both REST and Socket.IO.
 
 ## Project structure
 
