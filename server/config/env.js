@@ -39,6 +39,8 @@ module.exports = {
   rateLimit: {
     windowMs: data.RATE_LIMIT_WINDOW_MS,
     max: data.RATE_LIMIT_MAX,
-    authMax: data.AUTH_RATE_LIMIT_MAX
+    authMax: data.AUTH_RATE_LIMIT_MAX,
+    messageWindowMs: data.MESSAGE_RATE_LIMIT_WINDOW_MS,
+    messageMax: data.MESSAGE_RATE_LIMIT_MAX
   }
 }
