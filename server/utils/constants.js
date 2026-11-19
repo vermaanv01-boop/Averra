@@ -34,6 +34,8 @@ const MEETING_METHODS = ['online', 'in-person', 'other']
 
 const RESCHEDULE_STATUSES = ['pending', 'accepted', 'rejected']
 
+const MESSAGE_TYPES = ['text']
+
 module.exports = {
   SKILL_TYPES,
   SKILL_CATEGORIES,
