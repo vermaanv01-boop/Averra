@@ -184,8 +184,6 @@ before(async () => {
   io = initSocket(httpServer)
   await new Promise((resolve) => httpServer.listen(0, '127.0.0.1', resolve))
   baseUrl = `http://127.0.0.1:${httpServer.address().port}`
-
-  global.__closeMessagingSocket = () => closeSocket(io)
 })
 
 after(async () => {
