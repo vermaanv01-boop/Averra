@@ -190,7 +190,7 @@ after(async () => {
   if (httpServer.listening) {
     await new Promise((resolve) => httpServer.close(resolve))
   }
-  await global.__closeMessagingSocket()
+  await closeMessagingSocket(io)
   await mongoose.disconnect()
   await mongoServer.stop()
 })
