@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const app = require('./app')
 const config = require('./config/env')
 const connectDB = require('./config/db')
+const { initSocket } = require('./socket')
 const logger = require('./utils/logger')
 
 const startServer = async () => {
