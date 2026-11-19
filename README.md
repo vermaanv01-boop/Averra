@@ -185,6 +185,7 @@ skillswap/
     ├── models/             Mongoose schemas
     ├── routes/             Route definitions
     ├── services/           Business logic
+    ├── socket/             Socket.IO authentication, presence and typing
     ├── utils/              Shared helpers
     └── validators/         Input and environment validation
 ```
