@@ -42,9 +42,7 @@ const initSocket = (server) => {
         socket.join(events.conversationRoom(conversation._id.toString()))
       }
       await presence.add(socket)
-    } catch {
-      // Connection stays usable even if presence setup fails.
-    }
+    } catch {}
 
     const joinRoom = async (payload, callback, leave = false) => {
       const data = parse(joinConversationSchema, payload)
