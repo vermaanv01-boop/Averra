@@ -8,6 +8,8 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
+  MESSAGE_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60000),
+  MESSAGE_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(30),
   JWT_SECRET: z.string().trim().optional().default(''),
   JWT_EXPIRES_IN: z.string().trim().default('7d'),
   BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(4).max(17).default(12)
