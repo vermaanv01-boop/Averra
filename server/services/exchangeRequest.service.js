@@ -216,6 +216,10 @@ const transition = async (userId, requestId, action) => {
   }
   await request.save()
 
+  if (action === 'accept') {
+    await messagingService.ensureConversationForRequest(requestId)
+  }
+
   return getByIdForUser(userId, requestId)
 }
 
