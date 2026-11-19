@@ -634,6 +634,7 @@ describe('Socket.IO', () => {
     await waitConnected(senderFirst)
     await delay(150)
     assert.equal(onlineEvents, 1)
+    assert.equal(outsiderOnlineEvents, 0)
 
     const reconnect = createSocket(sender.token)
     const reconnectOnline = onceEvent(reconnect, 'presence:online')
