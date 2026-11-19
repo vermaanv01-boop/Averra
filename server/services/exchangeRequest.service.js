@@ -4,6 +4,7 @@ const User = require('../models/User')
 const AppError = require('../utils/AppError')
 const { ACTIVE_REQUEST_STATUSES } = require('../utils/constants')
 const { buildPagination } = require('../utils/pagination')
+const messagingService = require('./messaging.service')
 
 const transitions = {
   accept: { from: 'pending', role: 'recipient', to: 'accepted', timestamp: 'respondedAt' },
