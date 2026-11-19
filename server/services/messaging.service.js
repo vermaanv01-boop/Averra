@@ -348,6 +348,7 @@ const markRead = async (userId, conversationId, messageId) => {
 }
 
 module.exports = {
+  assertConversationMembership: findConversationForUser,
   ensureConversationForRequest,
   listConversations,
   getConversation,
