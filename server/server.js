@@ -10,6 +10,7 @@ const startServer = async () => {
   await connectDB()
 
   const server = http.createServer(app)
+  initSocket(server)
 
   server.listen(config.port, () => {
     logger.info(`Server listening on port ${config.port}`)
