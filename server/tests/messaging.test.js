@@ -550,7 +550,7 @@ describe('Socket.IO', () => {
   })
 
   it('applies the message rate limit to socket sends', async () => {
-    const { sender } = await createPair('eight-rate')
+    const { sender } = await createPair('eightrate')
     const conversation = await conversationFor(sender.token)
 
     const senderSocket = createSocket(sender.token)
