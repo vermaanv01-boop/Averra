@@ -1,0 +1,153 @@
+const { Server } = require('socket.io')
+const config = require('../config/env')
+const Conversation = require('../models/Conversation')
+const authenticateSocket = require('./auth')
+const presence = require('./presence')
+const typing = require('./typing')
+const messagingService = require('../services/messaging.service')
+const messageRateLimit = require('../services/messageRateLimit.service')
+const events = require('../services/messagingEvents')
+const {
+  joinConversationSchema,
+  sendMessageSchema,
+  readMessageSchema,
+  typingSchema
+} = require('../validators/message.validator')
+
+const parse = (schema, payload) => {
+  const result = schema.safeParse(payload || {})
+  return result.success ? result.data : null
+}
+
+const respond = (callback, body) => {
+  if (typeof callback === 'function') callback(body)
+}
+
+const initSocket = (server) => {
+  const io = new Server(server, {
+    cors: { origin: config.clientOrigin, credentials: true }
+  })
+
+  events.setIO(io)
+  io.use(authenticateSocket)
+
+  io.on('connection', async (socket) => {
+    const user = socket.data.user
+
+    try {
+      const conversations = await Conversation.find({ participants: user.id })
+        .select('_id')
+        .lean()
+      for (const conversation of conversations) {
+        socket.join(events.conversationRoom(conversation._id.toString()))
+      }
+      await presence.add(socket)
+    } catch {
+      // Connection stays usable even if presence setup fails.
+    }
+
+    const joinRoom = async (payload, callback, leave = false) => {
+      const data = parse(joinConversationSchema, payload)
+      if (!data) return respond(callback, { ok: false, error: 'Invalid payload' })
+
+      try {
+        await messagingService.assertConversationMembership(user.id, data.conversationId)
+        if (leave) {
+          socket.leave(events.conversationRoom(data.conversationId))
+        } else {
+          socket.join(events.conversationRoom(data.conversationId))
+        }
+        respond(callback, { ok: true, conversationId: data.conversationId })
+      } catch {
+        respond(callback, { ok: false, error: 'Conversation not found' })
+      }
+    }
+
+    socket.on('conversation:join', (payload, callback) => joinRoom(payload, callback))
+    socket.on('conversation:leave', (payload, callback) => joinRoom(payload, callback, true))
+
+    socket.on('message:send', async (payload, callback) => {
+      const data = parse(sendMessageSchema, payload)
+      if (!data) return respond(callback, { ok: false, error: 'Invalid payload' })
+
+      try {
+        await messagingService.assertConversationMembership(user.id, data.conversationId)
+      } catch {
+        return respond(callback, { ok: false, error: 'Conversation not found' })
+      }
+
+      const limit = messageRateLimit.consume(user.id)
+      if (!limit.allowed) {
+        return respond(callback, { ok: false, error: 'Rate limit exceeded', code: 429 })
+      }
+
+      try {
+        const result = await messagingService.createMessage(user.id, data.conversationId, data)
+        respond(callback, { ok: true, message: result.message, created: result.created })
+      } catch {
+        respond(callback, { ok: false, error: 'Message could not be sent' })
+      }
+    })
+
+    socket.on('message:read', async (payload, callback) => {
+      const data = parse(readMessageSchema, payload)
+      if (!data) return respond(callback, { ok: false, error: 'Invalid payload' })
+
+      try {
+        const result = await messagingService.markRead(user.id, data.conversationId, data.messageId)
+        respond(callback, { ok: true, ...result })
+      } catch (error) {
+        respond(callback, { ok: false, error: error.message || 'Could not mark messages as read' })
+      }
+    })
+
+    socket.on('typing:start', async (payload, callback) => {
+      const data = parse(typingSchema, payload)
+      if (!data) return respond(callback, { ok: false, error: 'Invalid payload' })
+
+      try {
+        await messagingService.assertConversationMembership(user.id, data.conversationId)
+      } catch {
+        return respond(callback, { ok: false, error: 'Conversation not found' })
+      }
+
+      typing.start(data.conversationId, user.id, socket.id)
+      events.emitToConversation(
+        data.conversationId,
+        'typing:start',
+        { conversationId: data.conversationId, user },
+        socket.id
+      )
+      respond(callback, { ok: true })
+    })
+
+    socket.on('typing:stop', async (payload, callback) => {
+      const data = parse(typingSchema, payload)
+      if (!data) return respond(callback, { ok: false, error: 'Invalid payload' })
+
+      try {
+        await messagingService.assertConversationMembership(user.id, data.conversationId)
+      } catch {
+        return respond(callback, { ok: false, error: 'Conversation not found' })
+      }
+
+      typing.stop(data.conversationId, user.id)
+      respond(callback, { ok: true })
+    })
+
+    socket.on('disconnect', () => {
+      typing.clearUser(user.id)
+      Promise.resolve(presence.remove(socket)).catch(() => {})
+    })
+  })
+
+  return io
+}
+
+const closeSocket = async (io) => {
+  if (!io) return
+  events.setIO(null)
+  await new Promise((resolve) => io.close(resolve))
+}
+
+module.exports = { initSocket, closeSocket }
