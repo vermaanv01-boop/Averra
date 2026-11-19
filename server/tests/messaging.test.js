@@ -187,10 +187,10 @@ before(async () => {
 })
 
 after(async () => {
+  await closeMessagingSocket(io)
   if (httpServer.listening) {
     await new Promise((resolve) => httpServer.close(resolve))
   }
-  await closeMessagingSocket(io)
   await mongoose.disconnect()
   await mongoServer.stop()
 })
@@ -559,6 +559,7 @@ describe('Socket.IO', () => {
 
     const senderFirst = createSocket(sender.token)
     await waitConnected(senderFirst)
+    await delay(150)
     assert.equal(onlineEvents, 1)
 
     const reconnect = createSocket(sender.token)
@@ -576,11 +577,10 @@ describe('Socket.IO', () => {
     assert.equal(offlineEvents, 0)
 
     senderSecond.close()
-    const offline = onceEvent(recipientSocket, 'presence:offline')
-    await waitConnected(reconnect)
-    await delay(150)
+    await delay(200)
     assert.equal(offlineEvents, 0)
 
+    const offline = onceEvent(recipientSocket, 'presence:offline')
     reconnect.close()
     const finalOffline = await offline
     assert.equal(finalOffline.userId, sender.user.id)
