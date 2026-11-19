@@ -116,6 +116,14 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 | `PATCH` | `/api/sessions/:id/reschedule-requests/:proposalId/reject` | Yes | Reject a rescheduling proposal |
 | `PATCH` | `/api/sessions/:id/cancel` | Yes | Cancel an active session |
 | `PATCH` | `/api/sessions/:id/complete` | Yes | Mark a confirmed session as completed |
+| `GET` | `/api/conversations` | Yes | List the user's conversations with unread counts |
+| `GET` | `/api/conversations/unread-count` | Yes | Get total and per-conversation unread counts |
+| `GET` | `/api/conversations/:id` | Yes | Get one conversation the user participates in |
+| `GET` | `/api/conversations/:id/messages` | Yes | List non-deleted messages chronologically (`page`, `limit`) |
+| `POST` | `/api/conversations/:id/messages` | Yes | Send a message (`content`, `clientMessageId`, optional `messageType`) |
+| `PATCH` | `/api/conversations/:id/read` | Yes | Mark the other participant's messages as read |
+| `PATCH` | `/api/messages/:id` | Yes | Edit one of the user's own messages (`content`) |
+| `DELETE` | `/api/messages/:id` | Yes | Soft-delete one of the user's own messages |
 
 Session proposals require an accepted exchange request and derive both participants from that request. Times are sent as a local `scheduledDate`, `startTime`, `duration`, and IANA `timezone`; the service stores `startAt`/`endAt` in UTC, rejects invalid or DST-nonexistent local times, and blocks overlapping confirmed sessions for the same participants.
 
