@@ -127,6 +127,42 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 
 Session proposals require an accepted exchange request and derive both participants from that request. Times are sent as a local `scheduledDate`, `startTime`, `duration`, and IANA `timezone`; the service stores `startAt`/`endAt` in UTC, rejects invalid or DST-nonexistent local times, and blocks overlapping confirmed sessions for the same participants.
 
+## Real-time messaging
+
+Conversations are created automatically when an exchange request is accepted. Each accepted request has exactly one conversation, and only its two participants can read or write messages. Messages are persisted before being broadcast; deleted messages are kept in MongoDB with `deletedAt` set but are removed from history and previews.
+
+### Authentication
+
+All conversation and message REST routes require `Authorization: Bearer <token>`. Socket.IO uses the same JWT: pass it during the handshake as `auth: { token }` or as an `Authorization: Bearer <token>` header. Revoked and expired tokens are rejected. Socket connections automatically join all conversation rooms the user is a member of; sockets also have a personal room for presence and read events.
+
+### Socket events
+
+Client to server (events with an acknowledgement callback receive `{ ok, ... }`):
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `conversation:join` | `{ conversationId }` | Join a conversation room after membership verification |
+| `conversation:leave` | `{ conversationId }` | Leave a conversation room |
+| `message:send` | `{ conversationId, content, clientMessageId, messageType? }` | Persist and broadcast a text message; duplicate keys return the original message |
+| `message:read` | `{ conversationId, messageId? }` | Mark one message or all unread messages in the conversation as read |
+| `typing:start` | `{ conversationId }` | Start a temporary typing indicator (expires after 3 seconds) |
+| `typing:stop` | `{ conversationId }` | Clear the typing indicator |
+
+Server to client:
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `message:new` | Message object | A message was saved and delivered |
+| `message:updated` | Message object | A message was edited by its sender |
+| `message:deleted` | `{ id, conversationId, deletedAt }` | A message was soft-deleted |
+| `message:read` | `{ conversationId, messageIds, readBy, messageId? }` | Read receipts for one or more messages |
+| `typing:start` | `{ conversationId, user }` | Another participant started typing |
+| `typing:stop` | `{ conversationId, user }` | Another participant stopped typing or the indicator expired |
+| `presence:online` | `{ userId }` | An authorized contact came online |
+| `presence:offline` | `{ userId }` | An authorized contact went offline after their final socket disconnected |
+
+Presence and typing are in-memory only and are never written to MongoDB. multiple connections per user are supported. Message sending is rate-limited per user across both REST and Socket.IO.
+
 ## Project structure
 
 ```text
