@@ -42,5 +42,8 @@ module.exports = {
     authMax: data.AUTH_RATE_LIMIT_MAX,
     messageWindowMs: data.MESSAGE_RATE_LIMIT_WINDOW_MS,
     messageMax: data.MESSAGE_RATE_LIMIT_MAX
+  },
+  review: {
+    reportThreshold: data.REVIEW_REPORT_THRESHOLD
   }
 }
