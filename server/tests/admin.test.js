@@ -294,9 +294,8 @@ describe('Admin bootstrap and privilege boundaries', () => {
     assert.equal(result.user.id, target.user.id)
     assert.equal(result.user.passwordHash, undefined)
 
-    const promoted = await User.findById(target.user.id)
+    const promoted = await User.findById(target.user.id).select('+passwordHash')
     assert.equal(promoted.role, 'admin')
-    assert.equal(promoted.passwordHash, target.user.passwordHash || promoted.passwordHash)
     assert.equal(await bcrypt.compare('Password1', promoted.passwordHash), true)
   })
 
