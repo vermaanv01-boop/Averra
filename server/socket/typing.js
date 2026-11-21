@@ -1,19 +1,16 @@
 const events = require('../services/messagingEvents')
+const { getSharedState } = require('../services/sharedState.service')
 
 const EXPIRY_MS = 3000
-
-const active = new Map()
-const byUser = new Map()
+const timers = new Map()
 
 const keyFor = (conversationId, userId) => `${conversationId}:${userId}`
 
-const clear = (key) => {
-  const entry = active.get(key)
-  if (!entry) return null
-  clearTimeout(entry.timer)
-  active.delete(key)
-  byUser.get(entry.userId)?.delete(key)
-  return entry
+const clearTimer = (key) => {
+  const timer = timers.get(key)
+  if (!timer) return
+  clearTimeout(timer)
+  timers.delete(key)
 }
 
 const emitStop = (conversationId, userId, exceptSocketId) =>
@@ -24,36 +21,52 @@ const emitStop = (conversationId, userId, exceptSocketId) =>
     exceptSocketId
   )
 
-const start = (conversationId, userId, socketId) => {
+const start = async (conversationId, userId, user, socketId) => {
   const key = keyFor(conversationId, userId)
-  clear(key)
+  clearTimer(key)
 
-  if (!byUser.has(userId)) byUser.set(userId, new Set())
-  byUser.get(userId).add(key)
+  const value = {
+    userId,
+    socketId,
+    conversationId,
+    user: user || { id: userId }
+  }
+
+  await getSharedState().typingSet(userId, key, value, EXPIRY_MS)
 
   const timer = setTimeout(() => {
-    active.delete(key)
-    byUser.get(userId)?.delete(key)
-    emitStop(conversationId, userId)
+    timers.delete(key)
+    Promise.resolve(getSharedState().typingDelete(key))
+      .then(() => emitStop(conversationId, userId))
+      .catch(() => {})
   }, EXPIRY_MS)
-
-  active.set(key, { timer, userId, socketId })
+  timers.set(key, timer)
 }
 
-const stop = (conversationId, userId) => {
-  const entry = clear(keyFor(conversationId, userId))
-  if (entry) emitStop(conversationId, userId, entry.socketId)
+const stop = async (conversationId, userId, socketId) => {
+  const key = keyFor(conversationId, userId)
+  const state = getSharedState()
+  const value = await state.typingGet(key)
+  clearTimer(key)
+  await state.typingDelete(key)
+  emitStop(conversationId, userId, socketId || value?.socketId)
 }
 
-const clearUser = (userId) => {
-  for (const key of byUser.get(userId) || []) {
-    const entry = clear(key)
-    if (entry) {
-      const conversationId = key.slice(0, key.lastIndexOf(':'))
-      emitStop(conversationId, userId, entry.socketId)
-    }
+const clearUser = async (userId, socketId) => {
+  const state = getSharedState()
+  const keys = await state.typingUserKeys(userId)
+
+  for (const key of keys) {
+    clearTimer(key)
+    await state.typingDelete(key)
+    const conversationId = key.slice(0, key.lastIndexOf(':'))
+    emitStop(conversationId, userId, socketId)
   }
-  byUser.delete(userId)
 }
 
-module.exports = { start, stop, clearUser }
+const reset = () => {
+  for (const timer of timers.values()) clearTimeout(timer)
+  timers.clear()
+}
+
+module.exports = { start, stop, clearUser, reset }
