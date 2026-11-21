@@ -20,7 +20,7 @@ const authenticateSocket = async (socket, next) => {
     }
 
     const payload = jwt.verify(token, config.jwt.secret)
-    if (!payload.sub || isTokenRevoked(payload.jti)) {
+    if (!payload.sub || (await isTokenRevoked(payload.jti))) {
       throw new Error('Unauthorized')
     }
 
