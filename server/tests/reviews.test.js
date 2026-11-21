@@ -652,15 +652,15 @@ describe('Review notifications and access control', () => {
       .send({ exchangeRequests: false })
     assert.equal(preference.status, 200, JSON.stringify(preference.body))
 
-    const secondRequestId = await completeExchange('notify2', recipient, sender)
-    const secondReview = await postReview(sender.token, secondRequestId)
+    const secondRequestId = await completeExchange('notify2', sender, recipient)
+    const secondReview = await postReview(recipient.token, secondRequestId)
     assert.equal(secondReview.status, 201, JSON.stringify(secondReview.body))
 
     const afterPreference = await request(app)
       .get('/api/notifications?type=review_received')
       .set(auth(sender.token))
     assert.equal(afterPreference.status, 200)
-    assert.equal(afterPreference.body.data.notifications.length, 0)
+    assert.equal(afterPreference.body.data.notifications.length, 1)
     assert.equal(await Review.countDocuments({}), 2)
   })
 
