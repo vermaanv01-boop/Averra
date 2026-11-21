@@ -257,6 +257,20 @@ const createMessage = async (userId, conversationId, { content, clientMessageId,
 
   const dto = await serializeMessage(message)
   events.emitToConversation(conversationId, 'message:new', dto)
+
+  if (otherParticipant && !events.isViewingConversation(conversationId, otherParticipant)) {
+    await notificationService.notifySafely({
+      recipientId: otherParticipant,
+      actorId: userId.toString(),
+      type: 'new_message',
+      title: 'New message',
+      message: 'You received a new message.',
+      relatedEntityId: message.id,
+      relatedEntityType: 'Message',
+      eventId: message.id
+    })
+  }
+
   return { message: dto, created: true }
 }
 
