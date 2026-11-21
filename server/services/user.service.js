@@ -25,6 +25,13 @@ const getByUsername = async (username) => {
 }
 
 const updateProfile = async (userId, updates) => {
+  const privilegedFields = ['role', 'accountStatus', 'suspension'].filter((field) =>
+    Object.prototype.hasOwnProperty.call(updates, field)
+  )
+  if (privilegedFields.length) {
+    throw new AppError('Profile updates cannot change administrative fields', 400)
+  }
+
   const changes = { ...updates }
 
   if (changes.username) {
