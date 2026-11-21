@@ -330,96 +330,100 @@ const respondToInvitation = async (userId, sessionId, action) => {
 }
 
 const requestReschedule = async (userId, sessionId, payload) => {
-  const session = await findSession(sessionId)
-  assertParticipant(session, userId)
+  await transaction.withDbTransaction(async (session) => {
+    const current = await findSession(sessionId, session)
+    assertParticipant(current, userId)
 
-  if (session.status !== 'confirmed') {
-    throw new AppError('Only confirmed sessions can be rescheduled', 409)
-  }
+    if (current.status !== 'confirmed') {
+      throw new AppError('Only confirmed sessions can be rescheduled', 409)
+    }
 
-  const { startAt, endAt } = buildSchedule(payload)
-  await assertNoConflicts(session.participants, startAt, endAt, session._id)
+    const { startAt, endAt } = buildSchedule(payload)
+    await assertNoConflicts(current.participants, startAt, endAt, current._id, session)
 
-  session.reschedulingHistory.push({
-    proposedBy: userId,
-    scheduledDate: payload.scheduledDate,
-    startTime: payload.startTime,
-    duration: payload.duration,
-    timezone: payload.timezone,
-    startAt,
-    endAt
-  })
-  session.status = 'reschedule_requested'
-  await session.save()
-  const proposal = session.reschedulingHistory[session.reschedulingHistory.length - 1]
+    current.reschedulingHistory.push({
+      proposedBy: userId,
+      scheduledDate: payload.scheduledDate,
+      startTime: payload.startTime,
+      duration: payload.duration,
+      timezone: payload.timezone,
+      startAt,
+      endAt
+    })
+    current.status = 'reschedule_requested'
+    await current.save({ session })
+    const proposal = current.reschedulingHistory[current.reschedulingHistory.length - 1]
 
-  await notificationService.notifySafely({
-    recipientId: otherParticipant(session, userId),
-    actorId: idString(userId),
-    type: 'session_rescheduled',
-    title: 'Session reschedule requested',
-    message: `A new time was proposed for the session: ${session.title}.`,
-    relatedEntityId: sessionId,
-    relatedEntityType: 'Session',
-    eventId: `reschedule:${proposal._id.toString()}:requested`
+    await notificationService.notifySafely({
+      recipientId: otherParticipant(current, userId),
+      actorId: idString(userId),
+      type: 'session_rescheduled',
+      title: 'Session reschedule requested',
+      message: `A new time was proposed for the session: ${current.title}.`,
+      relatedEntityId: sessionId,
+      relatedEntityType: 'Session',
+      eventId: `reschedule:${proposal._id.toString()}:requested`
+    })
   })
 
   return getByIdForUser(userId, sessionId)
 }
 
 const respondToReschedule = async (userId, sessionId, proposalId, action) => {
-  const session = await findSession(sessionId)
-  assertParticipant(session, userId)
+  await transaction.withDbTransaction(async (session) => {
+    const current = await findSession(sessionId, session)
+    assertParticipant(current, userId)
 
-  if (session.status !== 'reschedule_requested') {
-    throw new AppError('There is no pending rescheduling proposal for this session', 409)
-  }
+    if (current.status !== 'reschedule_requested') {
+      throw new AppError('There is no pending rescheduling proposal for this session', 409)
+    }
 
-  const proposal = session.reschedulingHistory.id(proposalId)
+    const proposal = current.reschedulingHistory.id(proposalId)
 
-  if (!proposal) {
-    throw new AppError('Rescheduling proposal not found', 404)
-  }
+    if (!proposal) {
+      throw new AppError('Rescheduling proposal not found', 404)
+    }
 
-  if (proposal.status !== 'pending') {
-    throw new AppError('This rescheduling proposal has already been resolved', 409)
-  }
+    if (proposal.status !== 'pending') {
+      throw new AppError('This rescheduling proposal has already been resolved', 409)
+    }
 
-  if (proposal.proposedBy.toString() === userId) {
-    throw new AppError('The proposing participant cannot respond to their own proposal', 403)
-  }
+    if (proposal.proposedBy.toString() === userId) {
+      throw new AppError('The proposing participant cannot respond to their own proposal', 403)
+    }
 
-  if (action === 'accept') {
-    await assertNoConflicts(session.participants, proposal.startAt, proposal.endAt, session._id)
+    if (action === 'accept') {
+      await assertNoConflicts(current.participants, proposal.startAt, proposal.endAt, current._id, session)
 
-    session.scheduledDate = proposal.scheduledDate
-    session.startTime = proposal.startTime
-    session.duration = proposal.duration
-    session.timezone = proposal.timezone
-    session.startAt = proposal.startAt
-    session.endAt = proposal.endAt
-    proposal.status = 'accepted'
-  } else {
-    proposal.status = 'rejected'
-  }
+      current.scheduledDate = proposal.scheduledDate
+      current.startTime = proposal.startTime
+      current.duration = proposal.duration
+      current.timezone = proposal.timezone
+      current.startAt = proposal.startAt
+      current.endAt = proposal.endAt
+      proposal.status = 'accepted'
+    } else {
+      proposal.status = 'rejected'
+    }
 
-  session.status = 'confirmed'
-  proposal.resolvedAt = new Date()
-  proposal.resolvedBy = userId
-  await session.save()
+    current.status = 'confirmed'
+    proposal.resolvedAt = new Date()
+    proposal.resolvedBy = userId
+    await current.save({ session })
 
-  await notificationService.notifySafely({
-    recipientId: idString(proposal.proposedBy),
-    actorId: idString(userId),
-    type: 'session_rescheduled',
-    title: action === 'accept' ? 'Session reschedule accepted' : 'Session reschedule rejected',
-    message:
-      action === 'accept'
-        ? `Your proposed new time for ${session.title} was accepted.`
-        : `Your proposed new time for ${session.title} was rejected.`,
-    relatedEntityId: sessionId,
-    relatedEntityType: 'Session',
-    eventId: `reschedule:${proposal._id.toString()}:${action}`
+    await notificationService.notifySafely({
+      recipientId: idString(proposal.proposedBy),
+      actorId: idString(userId),
+      type: 'session_rescheduled',
+      title: action === 'accept' ? 'Session reschedule accepted' : 'Session reschedule rejected',
+      message:
+        action === 'accept'
+          ? `Your proposed new time for ${current.title} was accepted.`
+          : `Your proposed new time for ${current.title} was rejected.`,
+      relatedEntityId: sessionId,
+      relatedEntityType: 'Session',
+      eventId: `reschedule:${proposal._id.toString()}:${action}`
+    })
   })
 
   return getByIdForUser(userId, sessionId)
