@@ -430,36 +430,38 @@ const respondToReschedule = async (userId, sessionId, proposalId, action) => {
 }
 
 const cancel = async (userId, sessionId, reason) => {
-  const session = await findSession(sessionId)
-  assertParticipant(session, userId)
+  await transaction.withDbTransaction(async (session) => {
+    const current = await findSession(sessionId, session)
+    assertParticipant(current, userId)
 
-  if (!SESSION_ACTIVE_STATUSES.includes(session.status)) {
-    throw new AppError('Only active sessions can be cancelled', 409)
-  }
-
-  session.status = 'cancelled'
-  session.cancellationReason = reason
-  session.cancelledAt = new Date()
-
-  for (const proposal of session.reschedulingHistory) {
-    if (proposal.status === 'pending') {
-      proposal.status = 'rejected'
-      proposal.resolvedAt = new Date()
-      proposal.resolvedBy = userId
+    if (!SESSION_ACTIVE_STATUSES.includes(current.status)) {
+      throw new AppError('Only active sessions can be cancelled', 409)
     }
-  }
 
-  await session.save()
+    current.status = 'cancelled'
+    current.cancellationReason = reason
+    current.cancelledAt = new Date()
 
-  await notificationService.notifySafely({
-    recipientId: otherParticipant(session, userId),
-    actorId: idString(userId),
-    type: 'session_cancelled',
-    title: 'Session cancelled',
-    message: `The session was cancelled: ${session.title}.`,
-    relatedEntityId: sessionId,
-    relatedEntityType: 'Session',
-    eventId: 'cancelled'
+    for (const proposal of current.reschedulingHistory) {
+      if (proposal.status === 'pending') {
+        proposal.status = 'rejected'
+        proposal.resolvedAt = new Date()
+        proposal.resolvedBy = userId
+      }
+    }
+
+    await current.save({ session })
+
+    await notificationService.notifySafely({
+      recipientId: otherParticipant(current, userId),
+      actorId: idString(userId),
+      type: 'session_cancelled',
+      title: 'Session cancelled',
+      message: `The session was cancelled: ${current.title}.`,
+      relatedEntityId: sessionId,
+      relatedEntityType: 'Session',
+      eventId: 'cancelled'
+    })
   })
 
   return getByIdForUser(userId, sessionId)
