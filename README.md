@@ -57,6 +57,8 @@ SkillSwap is a full-stack application scaffold built as an npm workspaces monore
 | `JWT_EXPIRES_IN` | No | `7d` | Access token lifetime |
 | `BCRYPT_SALT_ROUNDS` | No | `12` | Password hashing cost |
 
+The `ADMIN_NAME`, `ADMIN_USERNAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` variables are used only by the `npm run admin:bootstrap` command. They are intentionally not part of the running server configuration and should never be committed with real values.
+
 ### Client (`client/.env`)
 
 | Variable | Required | Default | Purpose |
