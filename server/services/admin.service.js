@@ -359,8 +359,8 @@ const statistics = async (actorId) => {
     Message.countDocuments({}),
     Message.countDocuments({ deletedAt: null }),
     Message.countDocuments({ deletedAt: { $ne: null } }),
-    countByStatus(Review, REVIEW_MODERATION_STATUSES),
-    countByStatus(ReviewReport, REPORT_STATUSES)
+    countByStatus(Review, 'moderationStatus', REVIEW_MODERATION_STATUSES),
+    countByStatus(ReviewReport, 'status', REPORT_STATUSES)
   ])
 
   return {
