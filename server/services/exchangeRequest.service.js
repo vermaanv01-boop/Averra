@@ -130,52 +130,53 @@ const create = async (senderId, { recipientId, offeredSkillId, requestedSkillId 
     throw new AppError('The recipient does not teach the requested skill', 400)
   }
 
-  const duplicate = await ExchangeRequest.findOne({
-    status: { $in: ACTIVE_REQUEST_STATUSES },
-    $or: [
-      { sender: senderId, recipient: recipientId },
-      { sender: recipientId, recipient: senderId }
-    ],
-    $and: [
-      {
-        $or: [
-          {
-            offeredSkill: offeredSkillId,
-            requestedSkill: requestedSkillId
-          },
-          {
-            offeredSkill: requestedSkillId,
-            requestedSkill: offeredSkillId
-          }
-        ]
-      }
-    ]
-  })
-
-  if (duplicate) {
-    throw new AppError('An active exchange request for these skills already exists', 409)
-  }
-
   try {
-    const request = await ExchangeRequest.create({
-      sender: senderId,
-      recipient: recipientId,
-      offeredSkill: offeredSkillId,
-      requestedSkill: requestedSkillId
+    const result = await transaction.withDbTransaction(async (session) => {
+      const duplicate = await transaction.withSession(
+        ExchangeRequest.findOne({
+          status: { $in: ACTIVE_REQUEST_STATUSES },
+          $or: [
+            { sender: senderId, recipient: recipientId },
+            { sender: recipientId, recipient: senderId }
+          ],
+          $and: [
+            {
+              $or: [
+                { offeredSkill: offeredSkillId, requestedSkill: requestedSkillId },
+                { offeredSkill: requestedSkillId, requestedSkill: offeredSkillId }
+              ]
+            }
+          ]
+        }),
+        session
+      ).lean()
+
+      if (duplicate) {
+        throw new AppError('An active exchange request for these skills already exists', 409)
+      }
+
+      const request = await transaction.createWithSession(ExchangeRequest, {
+        sender: senderId,
+        recipient: recipientId,
+        offeredSkill: offeredSkillId,
+        requestedSkill: requestedSkillId
+      }, session)
+
+      await notificationService.notifySafely({
+        recipientId: userIdToString(recipientId),
+        actorId: userIdToString(senderId),
+        type: 'exchange_request',
+        title: 'New exchange request',
+        message: 'You received a new exchange request.',
+        relatedEntityId: request.id,
+        relatedEntityType: 'ExchangeRequest',
+        eventId: 'created'
+      })
+
+      return { requestId: request.id }
     })
 
-    await notificationService.notifySafely({
-      recipientId: userIdToString(recipientId),
-      actorId: userIdToString(senderId),
-      type: 'exchange_request',
-      title: 'New exchange request',
-      message: 'You received a new exchange request.',
-      relatedEntityId: request.id,
-      relatedEntityType: 'ExchangeRequest',
-      eventId: 'created'
-    })
-
-    return getByIdForUser(userIdToString(senderId), request.id)
+    return await getByIdForUser(userIdToString(senderId), result.requestId)
   } catch (error) {
     if (error.code === 11000) {
       throw new AppError('An active exchange request for these skills already exists', 409)
