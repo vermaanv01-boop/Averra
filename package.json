@@ -13,6 +13,7 @@
     "dev:client": "npm run dev --workspace client",
     "build": "npm run build --workspace client",
     "start": "npm run start --workspace server",
+    "admin:bootstrap": "npm run admin:bootstrap --workspace server",
     "preview": "npm run preview --workspace client"
   },
   "devDependencies": {
