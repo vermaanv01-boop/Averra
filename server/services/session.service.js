@@ -432,6 +432,18 @@ const cancel = async (userId, sessionId, reason) => {
   }
 
   await session.save()
+
+  await notificationService.notifySafely({
+    recipientId: otherParticipant(session, userId),
+    actorId: idString(userId),
+    type: 'session_cancelled',
+    title: 'Session cancelled',
+    message: `The session was cancelled: ${session.title}.`,
+    relatedEntityId: sessionId,
+    relatedEntityType: 'Session',
+    eventId: 'cancelled'
+  })
+
   return getByIdForUser(userId, sessionId)
 }
 
