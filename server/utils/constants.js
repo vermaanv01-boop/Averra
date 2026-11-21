@@ -36,6 +36,38 @@ const RESCHEDULE_STATUSES = ['pending', 'accepted', 'rejected']
 
 const MESSAGE_TYPES = ['text']
 
+const NOTIFICATION_TYPES = [
+  'exchange_request',
+  'exchange_accepted',
+  'exchange_rejected',
+  'exchange_cancelled',
+  'session_invitation',
+  'session_confirmed',
+  'session_declined',
+  'session_rescheduled',
+  'session_cancelled',
+  'session_completed',
+  'new_message'
+]
+
+const NOTIFICATION_CATEGORIES = ['exchangeRequests', 'sessions', 'messages']
+
+const NOTIFICATION_ENTITY_TYPES = ['ExchangeRequest', 'Session', 'Conversation', 'Message']
+
+const NOTIFICATION_TYPE_CATEGORY = {
+  exchange_request: 'exchangeRequests',
+  exchange_accepted: 'exchangeRequests',
+  exchange_rejected: 'exchangeRequests',
+  exchange_cancelled: 'exchangeRequests',
+  session_invitation: 'sessions',
+  session_confirmed: 'sessions',
+  session_declined: 'sessions',
+  session_rescheduled: 'sessions',
+  session_cancelled: 'sessions',
+  session_completed: 'sessions',
+  new_message: 'messages'
+}
+
 module.exports = {
   SKILL_TYPES,
   SKILL_CATEGORIES,
