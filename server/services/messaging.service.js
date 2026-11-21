@@ -247,10 +247,10 @@ const createMessage = async (userId, conversationId, { content, clientMessageId,
         },
         options
       )
-      message = upsert.value || upsert.lastErrorObject?.upserted
-        ? upsert.value
-        : await transaction.withSession(Message.findById(upsert.lastErrorObject.upserted), session)
       created = Boolean(upsert.lastErrorObject?.upserted)
+      message = upsert.value || (created
+        ? await transaction.withSession(Message.findById(upsert.lastErrorObject.upserted), session)
+        : null)
     } catch (error) {
       if (error.code !== 11000) throw error
       message = await transaction.withSession(
