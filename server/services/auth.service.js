@@ -74,6 +74,9 @@ const login = async ({ email, password }) => {
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     throw new AppError('Invalid email or password', 401)
   }
+  if (user.accountStatus === 'suspended') {
+    throw new AppError('Account is suspended', 403)
+  }
 
   const { token } = issueToken(user.id)
   return { user: toPublicUser(user), token }
