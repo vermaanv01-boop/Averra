@@ -518,10 +518,89 @@ describe('Review moderation', () => {
 describe('Report management', () => {
   it('lists, filters, views and decides reports with moderator metadata and audit', async () => {
     const { token, admin } = await createAdmin('reports')
-    const { requestId } = await createCompletedPair('reprev')
-    const reviewer = await User.findOne({ username: /^adminreprevb$/ })
-    const review = await postReview(reviewer ? await loginAs(reviewer) : null, requestId).catch(() => null)
-    assert.ok(review)
+    const pair = await createCompletedPair('reprev')
+    const reporterOne = await registerUser('repone')
+    const reporterTwo = await registerUser('reptwo')
+    const reporterThree = await registerUser('repthree')
+
+    const review = await postReview(pair.recipient.token, pair.requestId)
+    assert.equal((await reportReview(reporterOne.token, review.id, 'spam')).status, 200)
+    assert.equal((await reportReview(reporterTwo.token, review.id, 'abuse')).status, 200)
+    assert.equal((await reportReview(reporterThree.token, review.id, 'other')).status, 200)
+
+    const pending = await adminGet(token, '/reports?status=pending')
+    assert.equal(pending.status, 200, JSON.stringify(pending.body))
+    assert.equal(pending.body.data.pagination.total, 3)
+
+    const spamOnly = await adminGet(token, '/reports?reason=spam')
+    assert.equal(spamOnly.body.data.pagination.total, 1)
+    assert.equal(spamOnly.body.data.reports[0].reason, 'spam')
+
+    const reportId = spamOnly.body.data.reports[0].id
+    const detail = await adminGet(token, `/reports/${reportId}`)
+    assert.equal(detail.status, 200, JSON.stringify(detail.body))
+    assert.equal(detail.body.data.report.review.id, review.id)
+    assert.equal(detail.body.data.report.status, 'pending')
+
+    const resolved = await adminPatch(token, `/reports/${reportId}`, {
+      action: 'resolved',
+      reason: 'Review removed after investigation'
+    })
+    assert.equal(resolved.status, 200, JSON.stringify(resolved.body))
+    assert.equal(resolved.body.data.report.status, 'resolved')
+    assert.equal(resolved.body.data.report.resolution.action, 'resolved')
+    assert.equal(resolved.body.data.report.resolution.moderator, admin.id)
+    assert.equal(
+      resolved.body.data.report.resolution.reason,
+      'Review removed after investigation'
+    )
+    assert.ok(resolved.body.data.report.resolution.resolvedAt)
+
+    const decisionAudit = await AuditLog.findOne({ action: 'report_resolved' })
+    assert.equal(decisionAudit.target.type, 'ReviewReport')
+    assert.equal(decisionAudit.target.id.toString(), reportId)
+    assert.equal(decisionAudit.actor.toString(), admin.id)
+
+    const duplicate = await adminPatch(token, `/reports/${reportId}`, {
+      action: 'dismissed',
+      reason: 'Changed my mind'
+    })
+    assert.equal(duplicate.status, 409, JSON.stringify(duplicate.body))
+
+    const otherReports = await adminGet(token, '/reports?status=pending')
+    const secondId = otherReports.body.data.reports[0].id
+    const dismissed = await adminPatch(token, `/reports/${secondId}`, {
+      action: 'dismissed',
+      reason: 'Insufficient evidence'
+    })
+    assert.equal(dismissed.status, 200, JSON.stringify(dismissed.body))
+    assert.equal(dismissed.body.data.report.status, 'dismissed')
+
+    const lastReport = await adminGet(token, '/reports?status=pending')
+    const thirdId = lastReport.body.data.reports[0].id
+    const escalated = await adminPatch(token, `/reports/${thirdId}`, {
+      action: 'escalated',
+      reason: 'Requires legal review'
+    })
+    assert.equal(escalated.status, 200, JSON.stringify(escalated.body))
+    assert.equal(escalated.body.data.report.status, 'escalated')
+
+    const counts = await adminGet(token, '/statistics')
+    assert.equal(counts.body.data.reports.escalated, 1)
+    assert.equal(counts.body.data.reports.dismissed, 1)
+    assert.equal(counts.body.data.reports.resolved, 1)
+
+    const invalidAction = await adminPatch(token, `/reports/${thirdId}`, {
+      action: 'deleted',
+      reason: 'Invalid action'
+    })
+    assert.equal(invalidAction.status, 400, JSON.stringify(invalidAction.body))
+
+    const shortReason = await adminPatch(token, `/reports/${thirdId}`, {
+      action: 'resolved',
+      reason: 'x'
+    })
+    assert.equal(shortReason.status, 400, JSON.stringify(shortReason.body))
   })
 })
 
