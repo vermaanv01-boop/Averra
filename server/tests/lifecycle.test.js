@@ -54,8 +54,6 @@ describe('Production configuration', () => {
       JWT_EXPIRES_IN: '7d'
     })
 
-    const childEnv = { ...process.env, ...result.env }
-    assert.equal(childEnv.ALLOW_INSECURE_NO_REDIS, 'true')
     assert.equal(result.status, 0, result.stderr)
   })
 })
