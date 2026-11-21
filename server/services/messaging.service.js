@@ -84,8 +84,8 @@ const findConversationForUser = async (userId, conversationId) => {
   return conversation
 }
 
-const ensureConversationForRequest = async (requestId) => {
-  const request = await ExchangeRequest.findById(requestId)
+const ensureConversationForRequest = async (requestId, session = null) => {
+  const request = await transaction.withSession(ExchangeRequest.findById(requestId), session)
 
   if (!request) {
     throw new AppError('Exchange request not found', 404)
