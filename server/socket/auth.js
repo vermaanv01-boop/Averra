@@ -24,8 +24,10 @@ const authenticateSocket = async (socket, next) => {
       throw new Error('Unauthorized')
     }
 
-    const user = await User.findById(payload.sub).select('name username profileImage').lean()
-    if (!user) {
+    const user = await User.findById(payload.sub)
+      .select('name username profileImage accountStatus')
+      .lean()
+    if (!user || user.accountStatus === 'suspended') {
       throw new Error('Unauthorized')
     }
 
