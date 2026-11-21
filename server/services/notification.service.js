@@ -274,11 +274,6 @@ const notify = async ({
   return dto
 }
 
-const isCategoryEnabled = (preferences, category) => {
-  if (!category) return true
-  return normalizePreferences(preferences)[category] !== false
-}
-
 const notifySafely = async (payload) => {
   try {
     return await notify(payload)
