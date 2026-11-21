@@ -496,7 +496,7 @@ describe('Reporting and moderation', () => {
 
     const selfReport = await request(app)
       .post(`/api/reviews/${reviewId}/report`)
-      .set(auth(sender.token))
+      .set(auth(recipient.token))
       .send({ reason: 'abuse' })
     assert.equal(selfReport.status, 400, JSON.stringify(selfReport.body))
 
