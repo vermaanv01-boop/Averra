@@ -132,7 +132,10 @@ describe('Notification outbox', () => {
     assert.equal(entry.attempts, 1)
     assert.match(entry.lastError, /relatedEntity and relatedEntityType/)
 
-    await NotificationOutbox.updateOne({ eventId }, { $set: { relatedEntityId: null } })
+    await NotificationOutbox.updateOne(
+      { eventId },
+      { $set: { relatedEntityId: null, nextAttemptAt: new Date(0) } }
+    )
     const dto = await notificationOutbox.dispatchEvent(eventId)
 
     assert.ok(dto)
