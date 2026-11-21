@@ -1,5 +1,7 @@
 const { Server } = require('socket.io')
+const { createAdapter } = require('@socket.io/redis-adapter')
 const config = require('../config/env')
+const { redisService } = require('../services/redis.service')
 const authenticateSocket = require('./auth')
 const presence = require('./presence')
 const typing = require('./typing')
