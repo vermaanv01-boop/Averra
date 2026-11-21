@@ -8,6 +8,7 @@ const logger = require('../utils/logger')
 const { buildPagination } = require('../utils/pagination')
 const ratingService = require('./rating.service')
 const notificationService = require('./notification.service')
+const transaction = require('./transaction.service')
 
 const idOf = (value) => {
   if (!value) return null
