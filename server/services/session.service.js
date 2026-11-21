@@ -220,6 +220,17 @@ const create = async (userId, payload) => {
     location: payload.location
   })
 
+  await notificationService.notifySafely({
+    recipientId: otherParticipant(session, userId),
+    actorId: idString(userId),
+    type: 'session_invitation',
+    title: 'New session invitation',
+    message: `You were invited to a session: ${session.title}.`,
+    relatedEntityId: session.id,
+    relatedEntityType: 'Session',
+    eventId: 'created'
+  })
+
   return getByIdForUser(userId, session.id)
 }
 
