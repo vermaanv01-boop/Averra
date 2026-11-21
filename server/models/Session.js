@@ -198,6 +198,7 @@ sessionSchema.index({ status: 1, startAt: 1 })
 sessionSchema.index(
   { exchangeRequest: 1 },
   {
+    name: 'one_active_session_per_exchange',
     unique: true,
     partialFilterExpression: { status: { $in: ['pending', 'confirmed', 'reschedule_requested'] } }
   }
