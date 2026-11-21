@@ -6,6 +6,7 @@ const { ACTIVE_REQUEST_STATUSES } = require('../utils/constants')
 const { buildPagination } = require('../utils/pagination')
 const messagingService = require('./messaging.service')
 const notificationService = require('./notification.service')
+const ratingService = require('./rating.service')
 
 const transitionNotifications = {
   accept: {
