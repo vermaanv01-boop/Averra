@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose')
 const { RATING_VALUES, REVIEW_MODERATION_STATUSES } = require('../utils/constants')
 
-const ratingField = {
+const ratingField = () => ({
   type: Number,
   required: true,
   min: RATING_VALUES[0],
@@ -10,7 +10,7 @@ const ratingField = {
     validator: Number.isInteger,
     message: 'Rating must be a whole number from 1 to 5'
   }
-}
+})
 
 const moderationHistorySchema = new Schema(
   {
