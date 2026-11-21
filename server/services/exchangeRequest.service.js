@@ -5,6 +5,28 @@ const AppError = require('../utils/AppError')
 const { ACTIVE_REQUEST_STATUSES } = require('../utils/constants')
 const { buildPagination } = require('../utils/pagination')
 const messagingService = require('./messaging.service')
+const notificationService = require('./notification.service')
+
+const transitionNotifications = {
+  accept: {
+    type: 'exchange_accepted',
+    title: 'Exchange request accepted',
+    message: 'Your exchange request was accepted.',
+    recipient: (request) => request.sender.toString()
+  },
+  reject: {
+    type: 'exchange_rejected',
+    title: 'Exchange request rejected',
+    message: 'Your exchange request was rejected.',
+    recipient: (request) => request.sender.toString()
+  },
+  cancel: {
+    type: 'exchange_cancelled',
+    title: 'Exchange request cancelled',
+    message: 'An exchange request was cancelled.',
+    recipient: (request) => request.recipient.toString()
+  }
+}
 
 const transitions = {
   accept: { from: 'pending', role: 'recipient', to: 'accepted', timestamp: 'respondedAt' },
