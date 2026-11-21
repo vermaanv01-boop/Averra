@@ -601,14 +601,14 @@ describe('Reporting and moderation', () => {
     )
   })
 
-  it('does not expose admin review endpoints without admin authorization', async () => {
+  it('requires authentication on admin review endpoints', async () => {
     const list = await request(app).get('/api/admin/reviews')
-    assert.equal(list.status, 404, JSON.stringify(list.body))
+    assert.equal(list.status, 401, JSON.stringify(list.body))
 
     const moderate = await request(app)
       .patch('/api/admin/reviews/000000000000000000000000/moderate')
       .send({ status: 'hidden' })
-    assert.equal(moderate.status, 404, JSON.stringify(moderate.body))
+    assert.equal(moderate.status, 401, JSON.stringify(moderate.body))
   })
 })
 
