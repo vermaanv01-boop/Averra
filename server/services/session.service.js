@@ -468,26 +468,28 @@ const cancel = async (userId, sessionId, reason) => {
 }
 
 const complete = async (userId, sessionId) => {
-  const session = await findSession(sessionId)
-  assertParticipant(session, userId)
+  await transaction.withDbTransaction(async (session) => {
+    const current = await findSession(sessionId, session)
+    assertParticipant(current, userId)
 
-  if (session.status !== 'confirmed') {
-    throw new AppError('Only confirmed sessions can be completed', 409)
-  }
+    if (current.status !== 'confirmed') {
+      throw new AppError('Only confirmed sessions can be completed', 409)
+    }
 
-  session.status = 'completed'
-  session.completedAt = new Date()
-  await session.save()
+    current.status = 'completed'
+    current.completedAt = new Date()
+    await current.save({ session })
 
-  await notificationService.notifySafely({
-    recipientId: otherParticipant(session, userId),
-    actorId: idString(userId),
-    type: 'session_completed',
-    title: 'Session completed',
-    message: `The session was marked as completed: ${session.title}.`,
-    relatedEntityId: sessionId,
-    relatedEntityType: 'Session',
-    eventId: 'completed'
+    await notificationService.notifySafely({
+      recipientId: otherParticipant(current, userId),
+      actorId: idString(userId),
+      type: 'session_completed',
+      title: 'Session completed',
+      message: `The session was marked as completed: ${current.title}.`,
+      relatedEntityId: sessionId,
+      relatedEntityType: 'Session',
+      eventId: 'completed'
+    })
   })
 
   return getByIdForUser(userId, sessionId)
