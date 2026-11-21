@@ -460,7 +460,7 @@ const cancel = async (userId, sessionId, reason) => {
       message: `The session was cancelled: ${current.title}.`,
       relatedEntityId: sessionId,
       relatedEntityType: 'Session',
-      eventId: 'cancelled'
+      eventId: `${sessionId}:cancelled`
     })
   })
 
