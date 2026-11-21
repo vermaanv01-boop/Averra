@@ -370,6 +370,7 @@ module.exports = {
   remove,
   report,
   listForModeration,
+  getForAdmin,
   moderate,
   toReviewDto
 }
