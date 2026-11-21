@@ -175,9 +175,27 @@ Stats are recalculated when a review is created, updated, deleted, reported into
 
 Any authenticated non-reviewer can report a review once using `reason` (`spam`, `abuse`, `inappropriate`, `fake`, `off_topic`, `other`) and optional `details`. Reports increment `reportCount` and preserve the reporting user. When the count reaches `REVIEW_REPORT_THRESHOLD`, the review becomes `flagged` and all moderation transitions are appended to `moderationHistory`. `reviewService.listForModeration` returns flagged, hidden, and reported reviews, and `reviewService.moderate(reviewId, status, moderatorId, note)` hides or restores a review while recording who changed it.
 
-**Admin prerequisite:** the current project has no admin role, moderator flag, or role-based authorization in `User` or `middleware/protect.js`. Therefore no `/api/admin/reviews` HTTP endpoints are exposed; doing so would require an insecure fake role check. Moderation is complete at the service layer and requires an explicit moderator identity. Admin-protected REST endpoints remain a missing prerequisite until real admin authorization is implemented.
-
 Creating a review stores a `review_received` notification for the reviewee through the centralized notification service, including REST history and authenticated Socket.IO delivery. The notification respects the existing `exchangeRequests` preference and is suppressed if the recipient disabled that category.
+
+## Admin and platform management
+
+Administrative access is a stored `User.role` of `admin` (the default is `user`). Public registration and profile updates cannot set or change `role`, `accountStatus`, or `suspension`; both the Zod validators and the user service reject those fields. `middleware/requireAdmin` checks the role on every `/api/admin` route, and every function in `services/admin.service.js` independently calls `assertAdmin` so authorization is not route-only.
+
+There is no public admin-registration endpoint. The initial administrator is created with a controlled command that requires `MONGODB_URI` and the `ADMIN_NAME`, `ADMIN_USERNAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` environment variables:
+
+```bash
+npm run admin:bootstrap
+```
+
+The bootstrap refuses to run if any administrator already exists. It creates a new admin with a bcrypt-hashed password, or promotes an existing non-suspended account matching the supplied email/username without changing its password. Credentials are never hardcoded or logged. Additional administrators can only be promoted by running the same controlled bootstrap after removing existing admins; there is intentionally no role-change API.
+
+Suspended accounts retain their records but cannot log in, use authenticated REST routes, or connect to Socket.IO. `User.accountStatus` and `User.suspension` store the status, reason, timestamps, and responsible admin. Administrators cannot suspend themselves. Restoring preserves the original suspension details and appends restoration metadata.
+
+`/api/admin/reviews` exposes the existing moderation service: it lists flagged, hidden, or reported reviews, returns any review by id without affecting the original record, and hides or restores reviews while appending to `moderationHistory`. `/api/admin/reports` lists and filters reports, returns report details, and records a moderator, action, reason, and timestamp for each decision; a decided report cannot be decided again.
+
+`/api/admin/statistics` returns live counts for users (including active/suspended/admin), skills, exchange requests by status, sessions by status, messages (including soft-deleted), reviews by moderation status, and reports by status. All values come from MongoDB via `countDocuments`.
+
+Administrative actions are appended to `AuditLog` with actor, action, target, reason, metadata, and timestamps. `GET /api/admin/audit-logs` is read-only; there are no admin update or delete routes, and Mongoose middleware rejects direct updates, deletions, or saves of existing audit records.
 
 ## Real-time messaging
 
