@@ -298,12 +298,14 @@ const report = async (userId, reviewId, { reason, details }) => {
 }
 
 const listForModeration = async (query) => {
-  const filter = {
-    $or: [
-      { moderationStatus: { $in: ['flagged', 'hidden'] } },
-      { reportCount: { $gt: 0 } }
-    ]
-  }
+  const filter = query.status
+    ? { moderationStatus: query.status }
+    : {
+        $or: [
+          { moderationStatus: { $in: ['flagged', 'hidden'] } },
+          { reportCount: { $gt: 0 } }
+        ]
+      }
   const skip = (query.page - 1) * query.limit
   const [reviews, total] = await Promise.all([
     withUsers(Review.find(filter))
