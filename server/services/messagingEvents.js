@@ -5,6 +5,7 @@ const setIO = (server) => {
 }
 
 const conversationRoom = (conversationId) => `conversation:${conversationId}`
+const viewingRoom = (conversationId) => `viewing:${conversationId}`
 const userRoom = (userId) => `user:${userId}`
 
 const emitToConversation = (conversationId, event, payload, exceptSocketId) => {
