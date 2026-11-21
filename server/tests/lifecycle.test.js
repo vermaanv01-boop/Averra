@@ -20,6 +20,9 @@ const runConfigCheck = (overrides) => {
   if (!Object.prototype.hasOwnProperty.call(overrides, 'CLIENT_ORIGIN')) {
     delete childEnv.CLIENT_ORIGIN
   }
+  if (!Object.prototype.hasOwnProperty.call(overrides, 'ALLOW_INSECURE_NO_REDIS')) {
+    delete childEnv.ALLOW_INSECURE_NO_REDIS
+  }
 
   return spawnSync(
     process.execPath,
