@@ -56,9 +56,9 @@ const reviewSchema = new Schema(
       ref: 'User',
       required: true
     },
-    overallRating: ratingField,
-    teachingRating: ratingField,
-    learningRating: ratingField,
+    overallRating: ratingField(),
+    teachingRating: ratingField(),
+    learningRating: ratingField(),
     comment: {
       type: String,
       required: true,
