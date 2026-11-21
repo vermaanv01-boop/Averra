@@ -13,7 +13,7 @@ const login = asyncHandler(async (req, res) => {
 })
 
 const logout = asyncHandler(async (req, res) => {
-  authService.logout(req.token)
+  await authService.logout(req.token)
   sendSuccess(res, { message: 'Logged out successfully' })
 })
 
