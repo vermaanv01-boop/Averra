@@ -459,6 +459,17 @@ const complete = async (userId, sessionId) => {
   session.completedAt = new Date()
   await session.save()
 
+  await notificationService.notifySafely({
+    recipientId: otherParticipant(session, userId),
+    actorId: idString(userId),
+    type: 'session_completed',
+    title: 'Session completed',
+    message: `The session was marked as completed: ${session.title}.`,
+    relatedEntityId: sessionId,
+    relatedEntityType: 'Session',
+    eventId: 'completed'
+  })
+
   return getByIdForUser(userId, sessionId)
 }
 
