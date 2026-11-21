@@ -20,8 +20,7 @@ const conversationSchema = new Schema(
     exchangeRequest: {
       type: Schema.Types.ObjectId,
       ref: 'ExchangeRequest',
-      required: true,
-      unique: true
+      required: true
     },
     lastMessage: {
       type: Schema.Types.ObjectId,
