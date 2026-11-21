@@ -35,7 +35,7 @@ router.get(
 )
 router.get('/:id', validate(idParamSchema, 'params'), getOne)
 router.patch('/:id', validate(idParamSchema, 'params'), validate(updateReviewSchema), update)
-router.post('/:id/report', validate(idParamSchema, 'params'), validate(reportReviewSchema), report)
+router.post('/:id/report', sensitiveLimiter, validate(idParamSchema, 'params'), validate(reportReviewSchema), report)
 router.delete('/:id', validate(idParamSchema, 'params'), remove)
 
 module.exports = router
