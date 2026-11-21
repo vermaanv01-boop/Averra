@@ -633,18 +633,18 @@ describe('Review notifications and access control', () => {
     assert.equal(event.relatedEntityType, 'Review')
     assert.equal(event.actor.id, recipient.user.id)
 
-    const recipientNotifications = await request(app)
-      .get('/api/notifications?type=review_received')
-      .set(auth(recipient.token))
-    assert.equal(recipientNotifications.status, 200)
-    assert.equal(recipientNotifications.body.data.notifications.length, 1)
-    assert.equal(recipientNotifications.body.data.notifications[0].relatedEntity, reviewId)
-
     const senderNotifications = await request(app)
       .get('/api/notifications?type=review_received')
       .set(auth(sender.token))
     assert.equal(senderNotifications.status, 200)
-    assert.equal(senderNotifications.body.data.notifications.length, 0)
+    assert.equal(senderNotifications.body.data.notifications.length, 1)
+    assert.equal(senderNotifications.body.data.notifications[0].relatedEntity, reviewId)
+
+    const recipientNotifications = await request(app)
+      .get('/api/notifications?type=review_received')
+      .set(auth(recipient.token))
+    assert.equal(recipientNotifications.status, 200)
+    assert.equal(recipientNotifications.body.data.notifications.length, 0)
 
     const preference = await request(app)
       .patch('/api/notifications/preferences')
