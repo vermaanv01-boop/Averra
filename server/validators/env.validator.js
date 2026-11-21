@@ -26,7 +26,7 @@ const envSchema = z.object({
     .refine((value) => !value || /^rediss?:\/\//.test(value), 'must be a redis:// or rediss:// URL')
     .optional()
     .default(''),
-  ALLOW_INSECURE_NO_REDIS: booleanFromEnv.default('false'),
+  ALLOW_INSECURE_NO_REDIS: booleanFromEnv,
   TRUST_PROXY: z.string().trim().refine(
     (value) => value === 'true' || value === 'false' || /^\d+$/.test(value),
     'must be true, false, or a proxy hop count'
