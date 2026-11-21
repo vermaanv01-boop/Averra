@@ -7,6 +7,7 @@ const { buildPagination } = require('../utils/pagination')
 const messagingService = require('./messaging.service')
 const notificationService = require('./notification.service')
 const ratingService = require('./rating.service')
+const transaction = require('./transaction.service')
 
 const transitionNotifications = {
   accept: {
