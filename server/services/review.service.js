@@ -322,6 +322,16 @@ const listForModeration = async (query) => {
   }
 }
 
+const getForAdmin = async (reviewId) => {
+  const review = await withUsers(Review.findById(reviewId)).lean()
+
+  if (!review) {
+    throw new AppError('Review not found', 404)
+  }
+
+  return toReviewDto(review)
+}
+
 const moderate = async (reviewId, status, moderatorId, note = '') => {
   if (!['hidden', 'visible'].includes(status)) {
     throw new AppError('Moderation status must be hidden or visible', 400)
