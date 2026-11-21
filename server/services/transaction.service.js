@@ -100,8 +100,10 @@ const sessionOf = () => storage.getStore()?.session || null
 
 const withSession = (query, session = sessionOf()) => (session ? query.session(session) : query)
 
-const createWithSession = (Model, doc, session = sessionOf()) =>
-  Model.create(doc, session ? { session } : {})
+const createWithSession = async (Model, doc, session = sessionOf()) => {
+  const [created] = await Model.create([doc], session ? { session } : {})
+  return created
+}
 
 module.exports = {
   withDbTransaction,
