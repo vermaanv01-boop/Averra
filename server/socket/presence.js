@@ -1,7 +1,6 @@
 const Conversation = require('../models/Conversation')
 const events = require('../services/messagingEvents')
-
-const connections = new Map()
+const { getSharedState } = require('../services/sharedState.service')
 
 const contactIds = async (userId) => {
   const conversations = await Conversation.find({ participants: userId })
@@ -20,21 +19,18 @@ const contactIds = async (userId) => {
 
 const add = async (socket) => {
   const userId = socket.data.user.id
-  const existing = connections.get(userId)
-  const wasOffline = !existing || existing.size === 0
-  const sockets = existing || new Set()
-  sockets.add(socket.id)
-  connections.set(userId, sockets)
+  const state = getSharedState()
+  const result = await state.presenceAdd(userId, socket.id)
   socket.join(events.userRoom(userId))
 
   const contacts = await contactIds(userId)
   for (const contactId of contacts) {
-    if (connections.has(contactId)) {
+    if (await state.presenceExists(contactId)) {
       socket.emit('presence:online', { userId: contactId })
     }
   }
 
-  if (wasOffline) {
+  if (result.added || result.count === 1) {
     for (const contactId of contacts) {
       events.emitToUser(contactId, 'presence:online', { userId })
     }
@@ -43,19 +39,17 @@ const add = async (socket) => {
 
 const remove = async (socket) => {
   const userId = socket.data.user.id
-  const sockets = connections.get(userId)
-  if (!sockets) return
+  const result = await getSharedState().presenceRemove(userId, socket.id)
+  if (!result.removed || result.count > 0) return
 
-  sockets.delete(socket.id)
-  if (sockets.size > 0) return
-
-  connections.delete(userId)
   const contacts = await contactIds(userId)
   for (const contactId of contacts) {
     events.emitToUser(contactId, 'presence:offline', { userId })
   }
 }
 
-const isOnline = (userId) => connections.has(userId)
+const isOnline = async (userId) => getSharedState().presenceExists(userId)
 
-module.exports = { add, remove, isOnline }
+const reset = () => getSharedState().reset()
+
+module.exports = { add, remove, isOnline, reset }
