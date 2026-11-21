@@ -14,7 +14,7 @@ const protect = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, config.jwt.secret)
 
-    if (!payload.sub || isTokenRevoked(payload.jti)) {
+    if (!payload.sub || (await isTokenRevoked(payload.jti))) {
       throw new Error('Invalid token')
     }
 
