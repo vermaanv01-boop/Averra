@@ -193,46 +193,57 @@ const create = async (userId, payload) => {
     throw new AppError('Sessions can only be proposed for accepted exchange requests', 409)
   }
 
-  const existingSession = await Session.findOne({
-    exchangeRequest: exchangeRequest._id,
-    status: { $in: SESSION_ACTIVE_STATUSES }
-  })
-
-  if (existingSession) {
-    throw new AppError('An active session already exists for this exchange request', 409)
-  }
-
   const { startAt, endAt } = buildSchedule(payload)
 
-  const session = await Session.create({
-    exchangeRequest: exchangeRequest._id,
-    proposedBy: userId,
-    participants,
-    title: payload.title,
-    description: payload.description,
-    scheduledDate: payload.scheduledDate,
-    startTime: payload.startTime,
-    duration: payload.duration,
-    timezone: payload.timezone,
-    startAt,
-    endAt,
-    meetingMethod: payload.meetingMethod,
-    meetingLink: payload.meetingLink,
-    location: payload.location
-  })
+  try {
+    const result = await transaction.withDbTransaction(async (session) => {
+      const existingSession = await transaction.withSession(Session.findOne({
+        exchangeRequest: exchangeRequest._id,
+        status: { $in: SESSION_ACTIVE_STATUSES }
+      }), session)
 
-  await notificationService.notifySafely({
-    recipientId: otherParticipant(session, userId),
-    actorId: idString(userId),
-    type: 'session_invitation',
-    title: 'New session invitation',
-    message: `You were invited to a session: ${session.title}.`,
-    relatedEntityId: session.id,
-    relatedEntityType: 'Session',
-    eventId: 'created'
-  })
+      if (existingSession) {
+        throw new AppError('An active session already exists for this exchange request', 409)
+      }
 
-  return getByIdForUser(userId, session.id)
+      const created = await transaction.createWithSession(Session, {
+        exchangeRequest: exchangeRequest._id,
+        proposedBy: userId,
+        participants,
+        title: payload.title,
+        description: payload.description,
+        scheduledDate: payload.scheduledDate,
+        startTime: payload.startTime,
+        duration: payload.duration,
+        timezone: payload.timezone,
+        startAt,
+        endAt,
+        meetingMethod: payload.meetingMethod,
+        meetingLink: payload.meetingLink,
+        location: payload.location
+      }, session)
+
+      await notificationService.notifySafely({
+        recipientId: otherParticipant(created, userId),
+        actorId: idString(userId),
+        type: 'session_invitation',
+        title: 'New session invitation',
+        message: `You were invited to a session: ${created.title}.`,
+        relatedEntityId: created.id,
+        relatedEntityType: 'Session',
+        eventId: 'created'
+      })
+
+      return { sessionId: created.id }
+    })
+
+    return getByIdForUser(userId, result.sessionId)
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new AppError('An active session already exists for this exchange request', 409)
+    }
+    throw error
+  }
 }
 
 const list = async (userId, query, preset = {}) => {
