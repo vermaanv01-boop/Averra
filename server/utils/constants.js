@@ -1,3 +1,6 @@
+const USER_ROLES = ['user', 'admin']
+const ACCOUNT_STATUSES = ['active', 'suspended']
+
 const SKILL_TYPES = ['teach', 'learn']
 
 const SKILL_CATEGORIES = [
@@ -88,6 +91,21 @@ const REVIEW_REPORT_REASONS = [
   'other'
 ]
 const DEFAULT_REVIEW_REPORT_THRESHOLD = 3
+
+const REPORT_STATUSES = ['pending', 'resolved', 'dismissed', 'escalated']
+const REPORT_ACTIONS = ['resolved', 'dismissed', 'escalated']
+
+const AUDIT_ACTIONS = [
+  'admin_bootstrap',
+  'user_suspended',
+  'user_restored',
+  'review_hidden',
+  'review_restored',
+  'report_resolved',
+  'report_dismissed',
+  'report_escalated'
+]
+const AUDIT_TARGET_TYPES = ['Admin', 'User', 'Review', 'ReviewReport']
 
 module.exports = {
   SKILL_TYPES,
