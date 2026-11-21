@@ -72,8 +72,22 @@ const NOTIFICATION_TYPE_CATEGORY = {
   session_rescheduled: 'sessions',
   session_cancelled: 'sessions',
   session_completed: 'sessions',
-  new_message: 'messages'
+  new_message: 'messages',
+  review_received: 'exchangeRequests'
 }
+
+const RATING_VALUES = [1, 2, 3, 4, 5]
+const NEUTRAL_RATING = (RATING_VALUES[0] + RATING_VALUES[RATING_VALUES.length - 1]) / 2
+const REVIEW_MODERATION_STATUSES = ['visible', 'flagged', 'hidden']
+const REVIEW_REPORT_REASONS = [
+  'spam',
+  'abuse',
+  'inappropriate',
+  'fake',
+  'off_topic',
+  'other'
+]
+const DEFAULT_REVIEW_REPORT_THRESHOLD = 3
 
 module.exports = {
   SKILL_TYPES,
