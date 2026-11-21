@@ -322,7 +322,7 @@ const respondToInvitation = async (userId, sessionId, action) => {
           : `Your session invitation was declined: ${current.title}.`,
       relatedEntityId: sessionId,
       relatedEntityType: 'Session',
-      eventId: action
+      eventId: `${sessionId}:${action}`
     })
   })
 
