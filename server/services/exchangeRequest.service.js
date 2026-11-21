@@ -254,6 +254,20 @@ const transition = async (userId, requestId, action) => {
     await messagingService.ensureConversationForRequest(requestId)
   }
 
+  const notification = transitionNotifications[action]
+  if (notification) {
+    await notificationService.notifySafely({
+      recipientId: notification.recipient(request),
+      actorId: userId,
+      type: notification.type,
+      title: notification.title,
+      message: notification.message,
+      relatedEntityId: requestId,
+      relatedEntityType: 'ExchangeRequest',
+      eventId: action
+    })
+  }
+
   return getByIdForUser(userId, requestId)
 }
 
