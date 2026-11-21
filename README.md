@@ -99,7 +99,8 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 
 | Method | Endpoint | Auth | Description |
 | --- | --- | --- | --- |
-| `GET` | `/health` | No | Server status, uptime, timestamp, and database state |
+| `GET` | `/health` | No | Server status, uptime, timestamp, and dependency state |
+| `GET` | `/health/ready` | No | Readiness probe; returns 503 when MongoDB or required Redis is unavailable |
 | `POST` | `/api/auth/register` | No | Create an account and receive a token |
 | `POST` | `/api/auth/login` | No | Log in and receive a token |
 | `POST` | `/api/auth/logout` | Yes | Revoke the current token |
