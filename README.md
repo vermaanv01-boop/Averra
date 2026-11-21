@@ -124,6 +124,13 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 | `PATCH` | `/api/conversations/:id/read` | Yes | Mark the other participant's messages as read |
 | `PATCH` | `/api/messages/:id` | Yes | Edit one of the user's own messages (`content`) |
 | `DELETE` | `/api/messages/:id` | Yes | Soft-delete one of the user's own messages |
+| `GET` | `/api/notifications` | Yes | List the user's notifications (`page`, `limit`, `isRead`, `type`) with unread count |
+| `GET` | `/api/notifications/unread-count` | Yes | Get the user's unread notification count |
+| `PATCH` | `/api/notifications/:id/read` | Yes | Mark one of the user's notifications as read |
+| `PATCH` | `/api/notifications/read-all` | Yes | Mark all of the user's notifications as read |
+| `DELETE` | `/api/notifications/:id` | Yes | Delete one of the user's notifications |
+| `GET` | `/api/notifications/preferences` | Yes | Get notification category preferences |
+| `PATCH` | `/api/notifications/preferences` | Yes | Update `exchangeRequests`, `sessions`, and/or `messages` preferences |
 
 Session proposals require an accepted exchange request and derive both participants from that request. Times are sent as a local `scheduledDate`, `startTime`, `duration`, and IANA `timezone`; the service stores `startAt`/`endAt` in UTC, rejects invalid or DST-nonexistent local times, and blocks overlapping confirmed sessions for the same participants.
 
@@ -162,6 +169,35 @@ Server to client:
 | `presence:offline` | `{ userId }` | An authorized contact went offline after their final socket disconnected |
 
 Presence and typing are in-memory only and are never written to MongoDB. Multiple connections per user are supported. Message sending is rate-limited per user across both REST and Socket.IO.
+
+## Notifications
+
+Notifications are generated centrally by backend services from business events and stored in MongoDB before any real-time delivery. Supported types are `exchange_request`, `exchange_accepted`, `exchange_rejected`, `exchange_cancelled`, `session_invitation`, `session_confirmed`, `session_declined`, `session_rescheduled`, `session_cancelled`, `session_completed`, and `new_message`. A notification stores its recipient, optional acting user, type, title, message, optional related entity, creation timestamp, read state, and a read timestamp.
+
+Generated events:
+
+| Source | Events |
+| --- | --- |
+| Exchange requests | New request, accepted, rejected, cancelled |
+| Sessions | Invitation, confirmed, declined, rescheduling requested, rescheduling accepted/rejected, cancelled, completed |
+| Messaging | New message received |
+
+Notifications are never generated for a user's own actions, and repeated business events with the same event key create only one notification. Users cannot notify each other directly: recipients are always derived from persisted business entities. `GET /api/notifications` supports `page` (default 1), `limit` (default 20, maximum 50), `isRead` (`true`/`false`), and `type`, and returns `notifications`, `unreadCount`, and `pagination`.
+
+Preferences are stored on the user and default to enabled for `exchangeRequests`, `sessions`, and `messages`. Disabling a category only suppresses its notifications; the underlying exchange, session, or messaging operation still succeeds. A `new_message` notification is also suppressed while the recipient is actively viewing the conversation (an authenticated socket that emitted `conversation:join` for that conversation). Typing indicators and read receipts never create notifications.
+
+Notification events use the same authenticated Socket.IO connection and personal `user:<userId>` room as presence, so only the intended recipient receives them and all of that user's active connections are covered. Offline notifications remain persisted and are returned by the REST API on the next request.
+
+Server to client:
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `notification:new` | Notification object | A notification was persisted for the recipient |
+| `notification:read` | `{ id?, ids?, isRead, readAt?, unreadCount } | One or more notifications were marked as read |
+| `notification:deleted` | `{ id, unreadCount }` | A notification was deleted |
+| `notification:unread-count` | `{ unreadCount }` | The recipient's unread count changed |
+
+Socket delivery failures are logged and do not roll back the persisted notification or the originating business operation.
 
 ## Project structure
 
