@@ -1,8 +1,9 @@
 const AppError = require('../utils/AppError')
+const asyncHandler = require('../utils/asyncHandler')
 const messageRateLimit = require('../services/messageRateLimit.service')
 
-const enforceMessageRateLimit = (req, res, next) => {
-  const result = messageRateLimit.consume(req.user.id)
+const enforceMessageRateLimit = asyncHandler(async (req, res, next) => {
+  const result = await messageRateLimit.consume(req.user.id)
 
   if (!result.allowed) {
     return next(
@@ -13,6 +14,6 @@ const enforceMessageRateLimit = (req, res, next) => {
   }
 
   next()
-}
+})
 
 module.exports = enforceMessageRateLimit
