@@ -35,6 +35,7 @@ const isViewingConversation = (conversationId, userId) => {
 module.exports = {
   setIO,
   conversationRoom,
+  viewingRoom,
   userRoom,
   emitToConversation,
   emitToUser,
