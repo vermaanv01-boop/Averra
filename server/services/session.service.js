@@ -297,6 +297,21 @@ const respondToInvitation = async (userId, sessionId, action) => {
   }
 
   await session.save()
+
+  await notificationService.notifySafely({
+    recipientId: idString(session.proposedBy),
+    actorId: idString(userId),
+    type: action === 'accept' ? 'session_confirmed' : 'session_declined',
+    title: action === 'accept' ? 'Session confirmed' : 'Session declined',
+    message:
+      action === 'accept'
+        ? `Your session invitation was confirmed: ${session.title}.`
+        : `Your session invitation was declined: ${session.title}.`,
+    relatedEntityId: sessionId,
+    relatedEntityType: 'Session',
+    eventId: action
+  })
+
   return getByIdForUser(userId, sessionId)
 }
 
