@@ -6,6 +6,7 @@ const AppError = require('../utils/AppError')
 const { buildPagination } = require('../utils/pagination')
 const events = require('./messagingEvents')
 const notificationService = require('./notification.service')
+const transaction = require('./transaction.service')
 
 const idOf = (value) => {
   if (!value) return null
