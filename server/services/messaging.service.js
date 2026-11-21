@@ -231,26 +231,35 @@ const createMessage = async (userId, conversationId, { content, clientMessageId,
     let created = false
 
     try {
-      const options = { upsert: true, new: true, setDefaultsOnInsert: true, rawResult: true }
+      const conversationObjectId = new mongoose.Types.ObjectId(conversationId.toString())
+      const senderObjectId = new mongoose.Types.ObjectId(userId.toString())
+      const options = {
+        upsert: true,
+        returnDocument: 'after',
+        includeResultMetadata: true
+      }
       if (session) options.session = session
-      const upsert = await Message.findOneAndUpdate(
-        { conversation: conversationId, sender: userId, clientMessageId },
+
+      const upsert = await Message.collection.findOneAndUpdate(
+        { conversation: conversationObjectId, sender: senderObjectId, clientMessageId },
         {
           $setOnInsert: {
-            conversation: conversationId,
-            sender: userId,
+            conversation: conversationObjectId,
+            sender: senderObjectId,
             content,
             messageType,
             clientMessageId,
-            deliveredTo: otherParticipant ? [otherParticipant] : []
+            deliveredTo: otherParticipant ? [new mongoose.Types.ObjectId(otherParticipant)] : []
           }
         },
         options
       )
+
       created = Boolean(upsert.lastErrorObject?.upserted)
-      message = upsert.value || (created
-        ? await transaction.withSession(Message.findById(upsert.lastErrorObject.upserted), session)
-        : null)
+      const messageId = upsert.value?._id || upsert.lastErrorObject?.upserted
+      message = messageId
+        ? await transaction.withSession(Message.findById(messageId), session)
+        : null
     } catch (error) {
       if (error.code !== 11000) throw error
       message = await transaction.withSession(
