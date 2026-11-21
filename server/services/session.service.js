@@ -337,6 +337,18 @@ const requestReschedule = async (userId, sessionId, payload) => {
   })
   session.status = 'reschedule_requested'
   await session.save()
+  const proposal = session.reschedulingHistory[session.reschedulingHistory.length - 1]
+
+  await notificationService.notifySafely({
+    recipientId: otherParticipant(session, userId),
+    actorId: idString(userId),
+    type: 'session_rescheduled',
+    title: 'Session reschedule requested',
+    message: `A new time was proposed for the session: ${session.title}.`,
+    relatedEntityId: sessionId,
+    relatedEntityType: 'Session',
+    eventId: `reschedule:${proposal._id.toString()}:requested`
+  })
 
   return getByIdForUser(userId, sessionId)
 }
