@@ -22,7 +22,7 @@ const emitToUser = (userId, event, payload) => {
 
 const isViewingConversation = (conversationId, userId) => {
   if (!io) return false
-  const room = io.sockets.adapter.rooms.get(conversationRoom(conversationId))
+  const room = io.sockets.adapter.rooms.get(viewingRoom(conversationId))
   if (!room) return false
 
   for (const socketId of room) {
