@@ -36,6 +36,7 @@ app.use('/api/conversations', conversationRoutes)
 app.use('/api/messages', messageRoutes)
 app.use('/api/notifications', notificationRoutes)
 app.use('/api/reviews', reviewRoutes)
+app.use('/api/admin', adminRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
