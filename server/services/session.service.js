@@ -231,7 +231,7 @@ const create = async (userId, payload) => {
         message: `You were invited to a session: ${created.title}.`,
         relatedEntityId: created.id,
         relatedEntityType: 'Session',
-        eventId: 'created'
+        eventId: `${created.id}:created`
       })
 
       return { sessionId: created.id }

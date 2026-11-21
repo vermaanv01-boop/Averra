@@ -269,7 +269,7 @@ const transition = async (userId, requestId, action) => {
         message: notification.message,
         relatedEntityId: requestId,
         relatedEntityType: 'ExchangeRequest',
-        eventId: action
+        eventId: `${requestId}:${action}`
       })
     }
 
