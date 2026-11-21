@@ -30,7 +30,7 @@ const add = async (socket) => {
     }
   }
 
-  if (result.added || result.count === 1) {
+  if (result.count === 1) {
     for (const contactId of contacts) {
       events.emitToUser(contactId, 'presence:online', { userId })
     }
