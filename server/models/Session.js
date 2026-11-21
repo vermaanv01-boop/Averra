@@ -74,8 +74,7 @@ const sessionSchema = new Schema(
     exchangeRequest: {
       type: Schema.Types.ObjectId,
       ref: 'ExchangeRequest',
-      required: true,
-      index: true
+      required: true
     },
     proposedBy: {
       type: Schema.Types.ObjectId,
