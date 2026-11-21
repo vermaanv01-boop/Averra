@@ -211,6 +211,11 @@ const updatePreferences = async (userId, updates) => {
   return { preferences: normalizePreferences(user.notificationPreferences) }
 }
 
+const isCategoryEnabled = (preferences, category) => {
+  if (!category) return true
+  return normalizePreferences(preferences)[category] !== false
+}
+
 const notify = async ({
   recipientId,
   actorId = null,
