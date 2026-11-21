@@ -23,11 +23,17 @@ const protect = async (req, res, next) => {
     if (!user) {
       throw new Error('User no longer exists')
     }
+    if (user.accountStatus === 'suspended') {
+      throw new AppError('Account is suspended', 403)
+    }
 
     req.user = user
     req.token = { jti: payload.jti, exp: payload.exp }
     next()
   } catch (error) {
+    if (error instanceof AppError) {
+      return next(error)
+    }
     next(new AppError('Invalid or expired token', 401))
   }
 }
