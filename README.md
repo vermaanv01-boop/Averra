@@ -54,8 +54,21 @@ SkillSwap is a full-stack application scaffold built as an npm workspaces monore
 | `MESSAGE_RATE_LIMIT_MAX` | No | `30` | Maximum messages a user may send per message window (REST and Socket.IO) |
 | `REVIEW_REPORT_THRESHOLD` | No | `3` | Number of unique reports that automatically flags a review for moderation |
 | `JWT_SECRET` | Production only | none | Secret used to sign access tokens; required in production |
-| `JWT_EXPIRES_IN` | No | `7d` | Access token lifetime |
+| `JWT_EXPIRES_IN` | No | `7d` | Access token lifetime (`<number><s/m/h/d/w/y>`) |
 | `BCRYPT_SALT_ROUNDS` | No | `12` | Password hashing cost |
+| `SENSITIVE_RATE_LIMIT_MAX` | No | `20` | Maximum requests per window on admin and review write routes |
+| `REDIS_URL` | Production (unless fallback enabled) | none | `redis://` or `rediss://` URL for Socket.IO, presence, typing, and distributed rate limits |
+| `ALLOW_INSECURE_NO_REDIS` | No | `false` | Explicitly allow a single-instance production deployment without Redis |
+| `TRUST_PROXY` | No | `false` | Express trust-proxy setting (`true`, `false`, or hop count) |
+| `LOG_LEVEL` | No | `info` | `silent`, `error`, `warn`, `info`, or `debug`; production logs are structured JSON |
+| `MONGO_CONNECT_TIMEOUT_MS` | No | `10000` | Server-selection timeout for MongoDB startup |
+| `MONGO_CONNECT_RETRIES` | No | `3` | Additional MongoDB connection attempts before startup fails |
+| `MONGO_TRANSACTIONS_DISABLED` | No | `false` | Force the non-transactional fallback even on a replica set |
+| `OUTBOX_WORKER_ENABLED` | No | `true` | Enable the notification outbox recovery/dispatch worker outside tests |
+| `OUTBOX_POLL_INTERVAL_MS` | No | `5000` | Outbox worker poll interval |
+| `OUTBOX_MAX_ATTEMPTS` | No | `5` | Failed deliveries before an outbox event is dead-lettered |
+| `OUTBOX_CLAIM_TIMEOUT_MS` | No | `60000` | Age after which a processing claim can be recovered |
+| `SHUTDOWN_TIMEOUT_MS` | No | `10000` | Forced shutdown deadline |
 
 The `ADMIN_NAME`, `ADMIN_USERNAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` variables are used only by the `npm run admin:bootstrap` command. They are intentionally not part of the running server configuration and should never be committed with real values.
 
