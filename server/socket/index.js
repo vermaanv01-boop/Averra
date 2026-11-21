@@ -110,7 +110,7 @@ const initSocket = (server) => {
         return respond(callback, { ok: false, error: 'Conversation not found' })
       }
 
-      typing.start(data.conversationId, user.id, socket.id)
+      await typing.start(data.conversationId, user.id, user, socket.id)
       events.emitToConversation(
         data.conversationId,
         'typing:start',
