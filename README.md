@@ -142,6 +142,18 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 | `PATCH` | `/api/reviews/:id` | Yes | Edit the authenticated user's own review |
 | `DELETE` | `/api/reviews/:id` | Yes | Delete the authenticated user's own review |
 | `POST` | `/api/reviews/:id/report` | Yes | Report a review (`reason`, optional `details`) |
+| `GET` | `/api/admin/users` | Admin | List users (`page`, `limit`, `search`, `role`, `status`, `sort`) |
+| `GET` | `/api/admin/users/:id` | Admin | Get one user's administrative details |
+| `PATCH` | `/api/admin/users/:id/suspend` | Admin | Suspend a user (`reason`) |
+| `PATCH` | `/api/admin/users/:id/restore` | Admin | Restore a suspended user (optional `reason`) |
+| `GET` | `/api/admin/reviews` | Admin | List flagged, hidden, or reported reviews (`page`, `limit`, `status`) |
+| `GET` | `/api/admin/reviews/:id` | Admin | Get any review, including hidden or flagged ones |
+| `PATCH` | `/api/admin/reviews/:id/moderate` | Admin | Hide or restore a review (`status`, optional `reason`) |
+| `GET` | `/api/admin/reports` | Admin | List reports (`page`, `limit`, `status`, `reason`) |
+| `GET` | `/api/admin/reports/:id` | Admin | Get one report with review and reporter details |
+| `PATCH` | `/api/admin/reports/:id` | Admin | Resolve, dismiss, or escalate a report (`action`, `reason`) |
+| `GET` | `/api/admin/statistics` | Admin | Platform counts from live database data |
+| `GET` | `/api/admin/audit-logs` | Admin | List administrative audit records (`page`, `limit`, `action`, `targetType`) |
 
 Session proposals require an accepted exchange request and derive both participants from that request. Times are sent as a local `scheduledDate`, `startTime`, `duration`, and IANA `timezone`; the service stores `startAt`/`endAt` in UTC, rejects invalid or DST-nonexistent local times, and blocks overlapping confirmed sessions for the same participants.
 
