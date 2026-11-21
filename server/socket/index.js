@@ -135,8 +135,10 @@ const initSocket = (server) => {
     })
 
     socket.on('disconnect', () => {
-      typing.clearUser(user.id)
-      Promise.resolve(presence.remove(socket)).catch(() => {})
+      Promise.all([
+        typing.clearUser(user.id, socket.id),
+        presence.remove(socket)
+      ]).catch(() => {})
     })
 
     const initialize = async () => {
