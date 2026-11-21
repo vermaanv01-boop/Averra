@@ -187,7 +187,7 @@ There is no public admin-registration endpoint. The initial administrator is cre
 npm run admin:bootstrap
 ```
 
-The bootstrap refuses to run if any administrator already exists. It creates a new admin with a bcrypt-hashed password, or promotes an existing non-suspended account matching the supplied email/username without changing its password. Credentials are never hardcoded or logged. Additional administrators can only be promoted by running the same controlled bootstrap after removing existing admins; there is intentionally no role-change API.
+The bootstrap refuses to run if any administrator already exists. It creates a new admin with a bcrypt-hashed password, or promotes an existing non-suspended account matching the supplied email/username without changing its password. Credentials are never hardcoded or logged. There is intentionally no role-change API; additional administrators require a separate controlled offline process, not a client request.
 
 Suspended accounts retain their records but cannot log in, use authenticated REST routes, or connect to Socket.IO. `User.accountStatus` and `User.suspension` store the status, reason, timestamps, and responsible admin. Administrators cannot suspend themselves. Restoring preserves the original suspension details and appends restoration metadata.
 
@@ -290,4 +290,4 @@ skillswap/
     └── validators/         Input and environment validation
 ```
 
-The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, real-time messaging, centralized notifications, and reviews/ratings/reputation) is implemented. Admin-protected HTTP moderation endpoints remain blocked until role-based admin authorization is added. The frontend remains a minimal foundation; no messaging, notification, or review UI is included.
+The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, real-time messaging, centralized notifications, reviews/ratings/reputation, and admin/platform management) is implemented. The frontend remains a minimal foundation; no messaging, notification, review, or admin UI is included.
