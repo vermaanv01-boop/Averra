@@ -27,7 +27,7 @@ const options = (limit, prefix) => ({
   ...(prefix ? { store: createStore(prefix) } : {})
 })
 
-const rateLimiter = rateLimit(options(config.rateLimit.max))
+const rateLimiter = rateLimit(options(config.rateLimit.max, 'global'))
 const authLimiter = rateLimit(options(config.rateLimit.authMax, 'auth'))
 const sensitiveLimiter = rateLimit(options(config.rateLimit.sensitiveMax, 'sensitive'))
 
