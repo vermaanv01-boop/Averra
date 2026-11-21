@@ -170,7 +170,7 @@ const create = async (senderId, { recipientId, offeredSkillId, requestedSkillId 
         message: 'You received a new exchange request.',
         relatedEntityId: request.id,
         relatedEntityType: 'ExchangeRequest',
-        eventId: 'created'
+        eventId: `${request.id}:created`
       })
 
       return { requestId: request.id }
