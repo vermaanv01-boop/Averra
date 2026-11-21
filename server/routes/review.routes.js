@@ -25,7 +25,7 @@ const router = express.Router()
 
 router.use(protect)
 
-router.post('/', validate(createReviewSchema), create)
+router.post('/', sensitiveLimiter, validate(createReviewSchema), create)
 router.get('/user/:userId', validate(userIdParamSchema, 'params'), validate(listReviewsSchema, 'query'), listForUser)
 router.get(
   '/exchange/:exchangeRequestId',
