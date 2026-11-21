@@ -211,6 +211,7 @@ Generated events:
 | Exchange requests | New request, accepted, rejected, cancelled |
 | Sessions | Invitation, confirmed, declined, rescheduling requested, rescheduling accepted/rejected, cancelled, completed |
 | Messaging | New message received |
+| Reviews | Review received |
 
 Notifications are never generated for a user's own actions, and repeated business events with the same event key create only one notification. Users cannot notify each other directly: recipients are always derived from persisted business entities. `GET /api/notifications` supports `page` (default 1), `limit` (default 20, maximum 50), `isRead` (`true`/`false`), and `type`, and returns `notifications`, `unreadCount`, and `pagination`.
 
