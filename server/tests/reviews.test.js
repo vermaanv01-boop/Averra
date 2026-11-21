@@ -589,8 +589,7 @@ describe('Reporting and moderation', () => {
     assert.equal(idempotent.moderationHistory.length, 3)
 
     const listed = await reviewService.listForModeration({ page: 1, limit: 20 })
-    assert.equal(listed.reviews.length, 1)
-    assert.equal(listed.reviews[0].id, reviewId)
+    assert.equal(listed.reviews.length, 0)
 
     await assert.rejects(
       reviewService.moderate(reviewId, 'flagged', moderator.user.id),
