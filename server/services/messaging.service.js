@@ -226,55 +226,72 @@ const createMessage = async (userId, conversationId, { content, clientMessageId,
     .map(idOf)
     .find((participantId) => participantId !== userId.toString())
 
-  const existing = await Message.findOne({ conversation: conversationId, sender: userId, clientMessageId })
-  if (existing) {
-    return { message: await serializeMessage(existing), created: false }
-  }
+  const result = await transaction.withDbTransaction(async (session) => {
+    let message
+    let created = false
 
-  let message
-  try {
-    message = await Message.create({
-      conversation: conversationId,
-      sender: userId,
-      content,
-      messageType,
-      clientMessageId,
-      deliveredTo: otherParticipant ? [otherParticipant] : []
-    })
-  } catch (error) {
-    if (error.code === 11000) {
-      const duplicate = await Message.findOne({
-        conversation: conversationId,
-        sender: userId,
-        clientMessageId
-      })
-      return { message: await serializeMessage(duplicate), created: false }
+    try {
+      const options = { upsert: true, new: true, setDefaultsOnInsert: true, rawResult: true }
+      if (session) options.session = session
+      const upsert = await Message.findOneAndUpdate(
+        { conversation: conversationId, sender: userId, clientMessageId },
+        {
+          $setOnInsert: {
+            conversation: conversationId,
+            sender: userId,
+            content,
+            messageType,
+            clientMessageId,
+            deliveredTo: otherParticipant ? [otherParticipant] : []
+          }
+        },
+        options
+      )
+      message = upsert.value || upsert.lastErrorObject?.upserted
+        ? upsert.value
+        : await transaction.withSession(Message.findById(upsert.lastErrorObject.upserted), session)
+      created = Boolean(upsert.lastErrorObject?.upserted)
+    } catch (error) {
+      if (error.code !== 11000) throw error
+      message = await transaction.withSession(
+        Message.findOne({ conversation: conversationId, sender: userId, clientMessageId }),
+        session
+      )
     }
-    throw error
-  }
 
-  await Conversation.updateOne(
-    { _id: conversationId },
-    { $set: { lastMessage: message._id, lastMessageAt: message.createdAt } }
-  )
+    if (!message) throw new AppError('Message could not be created', 500)
 
+    if (created) {
+      await transaction.withSession(
+        Conversation.updateOne(
+          { _id: conversationId },
+          { $set: { lastMessage: message._id, lastMessageAt: message.createdAt } }
+        ),
+        session
+      )
+
+      if (otherParticipant && !events.isViewingConversation(conversationId, otherParticipant)) {
+        await notificationService.notifySafely({
+          recipientId: otherParticipant,
+          actorId: userId.toString(),
+          type: 'new_message',
+          title: 'New message',
+          message: 'You received a new message.',
+          relatedEntityId: message.id,
+          relatedEntityType: 'Message',
+          eventId: message.id
+        })
+      }
+    }
+
+    return { messageId: message._id, created }
+  })
+
+  const message = await Message.findById(result.messageId)
   const dto = await serializeMessage(message)
-  events.emitToConversation(conversationId, 'message:new', dto)
+  if (result.created) events.emitToConversation(conversationId, 'message:new', dto)
 
-  if (otherParticipant && !events.isViewingConversation(conversationId, otherParticipant)) {
-    await notificationService.notifySafely({
-      recipientId: otherParticipant,
-      actorId: userId.toString(),
-      type: 'new_message',
-      title: 'New message',
-      message: 'You received a new message.',
-      relatedEntityId: message.id,
-      relatedEntityType: 'Message',
-      eventId: message.id
-    })
-  }
-
-  return { message: dto, created: true }
+  return { message: dto, created: result.created }
 }
 
 const findMessageForUser = async (userId, messageId) => {
