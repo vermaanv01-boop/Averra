@@ -1,6 +1,7 @@
 const express = require('express')
 const validate = require('../middleware/validate')
 const protect = require('../middleware/protect')
+const { sensitiveLimiter } = require('../middleware/rateLimiter')
 const {
   createReviewSchema,
   updateReviewSchema,
