@@ -142,6 +142,28 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 
 Session proposals require an accepted exchange request and derive both participants from that request. Times are sent as a local `scheduledDate`, `startTime`, `duration`, and IANA `timezone`; the service stores `startAt`/`endAt` in UTC, rejects invalid or DST-nonexistent local times, and blocks overlapping confirmed sessions for the same participants.
 
+## Reviews, ratings and reputation
+
+Reviews can only be created for a completed exchange request, and the reviewee is always derived from that request; clients cannot choose who is reviewed. Each participant may leave one review per exchange, self-reviews are rejected, and only the original reviewer can edit or delete a review. Ratings (`overallRating`, `teachingRating`, `learningRating`) are integers from 1 to 5, and a non-empty comment of at most 2000 characters is required.
+
+`GET /api/reviews/user/:userId` and `GET /api/reviews/exchange/:exchangeRequestId` accept `page` (default 1), `limit` (default 20, maximum 50), and `sort` (`newest`, `oldest`, `highest`, `lowest`). Only `visible` reviews are returned publicly; `flagged` and `hidden` reviews are excluded immediately.
+
+The `rating.service` aggregates visible reviews with a MongoDB `$facet` and stores derived stats in `User.reputation`: review count, average overall/teaching/learning ratings, a 1–5 rating distribution, completed exchange count, and a reputation score. The score is deterministic and blends review quality with exchange activity using a neutral rating of 3:
+
+```text
+score = totalReviews + completedExchanges === 0
+  ? 0
+  : round2((averageOverallRating * totalReviews + 3 * completedExchanges) / (totalReviews + completedExchanges))
+```
+
+Stats are recalculated when a review is created, updated, deleted, reported into a flagged state, or moderated, and when an exchange request transitions to `completed`. Users with no reviews but completed exchanges therefore have a neutral score of 3, while users with no activity have 0. The derived `reputation` object is included in public profile responses.
+
+Any authenticated non-reviewer can report a review once using `reason` (`spam`, `abuse`, `inappropriate`, `fake`, `off_topic`, `other`) and optional `details`. Reports increment `reportCount` and preserve the reporting user. When the count reaches `REVIEW_REPORT_THRESHOLD`, the review becomes `flagged` and all moderation transitions are appended to `moderationHistory`. `reviewService.listForModeration` returns flagged, hidden, and reported reviews, and `reviewService.moderate(reviewId, status, moderatorId, note)` hides or restores a review while recording who changed it.
+
+**Admin prerequisite:** the current project has no admin role, moderator flag, or role-based authorization in `User` or `middleware/protect.js`. Therefore no `/api/admin/reviews` HTTP endpoints are exposed; doing so would require an insecure fake role check. Moderation is complete at the service layer and requires an explicit moderator identity. Admin-protected REST endpoints remain a missing prerequisite until real admin authorization is implemented.
+
+Creating a review stores a `review_received` notification for the reviewee through the centralized notification service, including REST history and authenticated Socket.IO delivery. The notification respects the existing `exchangeRequests` preference and is suppressed if the recipient disabled that category.
+
 ## Real-time messaging
 
 Conversations are created automatically when an exchange request is accepted. Each accepted request has exactly one conversation, and only its two participants can read or write messages. Messages are persisted before being broadcast; deleted messages are kept in MongoDB with `deletedAt` set but are removed from history and previews.
