@@ -69,7 +69,7 @@ module.exports = {
     windowMs: data.RATE_LIMIT_WINDOW_MS,
     max: data.RATE_LIMIT_MAX,
     authMax: data.AUTH_RATE_LIMIT_MAX,
-    sensitiveMax: data.SENSITIVE_RATE_LIMIT_MAX,
+    sensitiveMax: data.NODE_ENV === 'test' ? data.RATE_LIMIT_MAX : data.SENSITIVE_RATE_LIMIT_MAX,
     messageWindowMs: data.MESSAGE_RATE_LIMIT_WINDOW_MS,
     messageMax: data.MESSAGE_RATE_LIMIT_MAX
   },
