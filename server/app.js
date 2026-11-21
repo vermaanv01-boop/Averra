@@ -32,6 +32,7 @@ app.use('/api/exchange-requests', exchangeRequestRoutes)
 app.use('/api/sessions', sessionRoutes)
 app.use('/api/conversations', conversationRoutes)
 app.use('/api/messages', messageRoutes)
+app.use('/api/notifications', notificationRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
