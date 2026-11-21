@@ -222,60 +222,68 @@ const list = async (userId, query) => {
 
 const transition = async (userId, requestId, action) => {
   const rule = transitions[action]
-  const request = await ExchangeRequest.findById(requestId)
 
-  if (!request) {
-    throw new AppError('Exchange request not found', 404)
-  }
+  const result = await transaction.withDbTransaction(async (session) => {
+    const request = await transaction.withSession(ExchangeRequest.findById(requestId), session)
 
-  const isSender = request.sender.toString() === userId
-  const isRecipient = request.recipient.toString() === userId
+    if (!request) {
+      throw new AppError('Exchange request not found', 404)
+    }
 
-  if (!isSender && !isRecipient) {
-    throw new AppError('Exchange request not found', 404)
-  }
+    const isSender = request.sender.toString() === userId
+    const isRecipient = request.recipient.toString() === userId
 
-  if (rule.role === 'sender' && !isSender) {
-    throw new AppError('Only the sender can cancel this request', 403)
-  }
+    if (!isSender && !isRecipient) {
+      throw new AppError('Exchange request not found', 404)
+    }
 
-  if (rule.role === 'recipient' && !isRecipient) {
-    throw new AppError('Only the recipient can manage this request', 403)
-  }
+    if (rule.role === 'sender' && !isSender) {
+      throw new AppError('Only the sender can cancel this request', 403)
+    }
 
-  if (request.status !== rule.from) {
-    throw new AppError(`Only ${rule.from} requests can be ${actionLabels[action]}`, 409)
-  }
+    if (rule.role === 'recipient' && !isRecipient) {
+      throw new AppError('Only the recipient can manage this request', 403)
+    }
 
-  request.status = rule.to
-  if (rule.timestamp) {
-    request[rule.timestamp] = new Date()
-  }
-  await request.save()
+    if (request.status !== rule.from) {
+      throw new AppError(`Only ${rule.from} requests can be ${actionLabels[action]}`, 409)
+    }
 
-  if (action === 'accept') {
-    await messagingService.ensureConversationForRequest(requestId)
-  }
+    request.status = rule.to
+    if (rule.timestamp) {
+      request[rule.timestamp] = new Date()
+    }
+    await request.save({ session })
+
+    if (action === 'accept') {
+      await messagingService.ensureConversationForRequest(requestId, session)
+    }
+
+    const notification = transitionNotifications[action]
+    if (notification) {
+      await notificationService.notifySafely({
+        recipientId: notification.recipient(request),
+        actorId: userId,
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        relatedEntityId: requestId,
+        relatedEntityType: 'ExchangeRequest',
+        eventId: action
+      })
+    }
+
+    return {
+      senderId: request.sender.toString(),
+      recipientId: request.recipient.toString()
+    }
+  })
 
   if (action === 'complete') {
     await Promise.all([
-      ratingService.recalculateSafely(request.sender.toString()),
-      ratingService.recalculateSafely(request.recipient.toString())
+      ratingService.recalculateSafely(result.senderId),
+      ratingService.recalculateSafely(result.recipientId)
     ])
-  }
-
-  const notification = transitionNotifications[action]
-  if (notification) {
-    await notificationService.notifySafely({
-      recipientId: notification.recipient(request),
-      actorId: userId,
-      type: notification.type,
-      title: notification.title,
-      message: notification.message,
-      relatedEntityId: requestId,
-      relatedEntityType: 'ExchangeRequest',
-      eventId: action
-    })
   }
 
   return getByIdForUser(userId, requestId)
