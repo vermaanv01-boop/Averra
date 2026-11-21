@@ -567,6 +567,10 @@ describe('Reporting and moderation', () => {
     assert.equal(hiddenRead.status, 404, JSON.stringify(hiddenRead.body))
     assert.equal((await statsFor(sender.user.id)).totalReviews, 0)
 
+    const queued = await reviewService.listForModeration({ page: 1, limit: 20 })
+    assert.equal(queued.reviews.length, 1)
+    assert.equal(queued.reviews[0].id, reviewId)
+
     const restored = await reviewService.moderate(
       reviewId,
       'visible',
