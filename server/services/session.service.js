@@ -141,14 +141,14 @@ const assertResponder = (session, userId) => {
   }
 }
 
-const assertNoConflicts = async (participants, startAt, endAt, excludeSessionId) => {
-  const conflicts = await Session.find({
+const assertNoConflicts = async (participants, startAt, endAt, excludeSessionId, dbSession = null) => {
+  const conflicts = await transaction.withSession(Session.find({
     _id: { $ne: excludeSessionId },
     status: 'confirmed',
     participants: { $in: participants.map((participant) => participant.toString()) },
     startAt: { $lt: endAt },
     endAt: { $gt: startAt }
-  })
+  }), dbSession)
     .select('title scheduledDate startTime timezone startAt endAt')
     .lean()
 
