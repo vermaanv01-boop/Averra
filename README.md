@@ -193,7 +193,7 @@ Server to client:
 | Event | Payload | Description |
 | --- | --- | --- |
 | `notification:new` | Notification object | A notification was persisted for the recipient |
-| `notification:read` | `{ id?, ids?, isRead, readAt?, unreadCount } | One or more notifications were marked as read |
+| `notification:read` | `{ id?, ids?, isRead, readAt?, unreadCount }` | One or more notifications were marked as read |
 | `notification:deleted` | `{ id, unreadCount }` | A notification was deleted |
 | `notification:unread-count` | `{ unreadCount }` | The recipient's unread count changed |
 
