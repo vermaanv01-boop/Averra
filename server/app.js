@@ -2,7 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 const config = require('./config/env')
-const { rateLimiter } = require('./middleware/rateLimiter')
+const requestContext = require('./middleware/requestContext')
+const { rateLimiter, sensitiveLimiter } = require('./middleware/rateLimiter')
 const healthRoutes = require('./routes/health.routes')
 const authRoutes = require('./routes/auth.routes')
 const userRoutes = require('./routes/user.routes')
@@ -19,13 +20,27 @@ const { notFound, errorHandler } = require('./middleware/errorHandler')
 
 const app = express()
 
-app.use(helmet())
-app.use(cors({ origin: config.clientOrigin, credentials: true }))
+app.set('trust proxy', config.trustProxy)
+app.use(requestContext)
+app.use(helmet({
+  referrerPolicy: { policy: 'no-referrer' },
+  frameguard: { action: 'deny' },
+  crossOriginResourcePolicy: { policy: 'same-origin' },
+  hsts: config.isProduction ? { maxAge: 15552000, includeSubDomains: true } : false
+}))
+app.use(cors({
+  origin: config.clientOrigin,
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id'],
+  exposedHeaders: ['X-Request-Id', 'RateLimit-Limit', 'RateLimit-Remaining', 'RateLimit-Reset']
+}))
 app.use(express.json({ limit: '1mb' }))
-app.use(express.urlencoded({ extended: true }))
-app.use(rateLimiter)
+app.use(express.urlencoded({ extended: true, limit: '1mb' }))
 
 app.use('/', healthRoutes)
+
+app.use(rateLimiter)
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/skills', skillRoutes)
@@ -36,7 +51,7 @@ app.use('/api/conversations', conversationRoutes)
 app.use('/api/messages', messageRoutes)
 app.use('/api/notifications', notificationRoutes)
 app.use('/api/reviews', reviewRoutes)
-app.use('/api/admin', adminRoutes)
+app.use('/api/admin', sensitiveLimiter, adminRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
