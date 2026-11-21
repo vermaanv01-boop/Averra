@@ -44,8 +44,10 @@ const initSocket = (server) => {
         await messagingService.assertConversationMembership(user.id, data.conversationId)
         if (leave) {
           socket.leave(events.conversationRoom(data.conversationId))
+          socket.leave(events.viewingRoom(data.conversationId))
         } else {
           socket.join(events.conversationRoom(data.conversationId))
+          socket.join(events.viewingRoom(data.conversationId))
         }
         respond(callback, { ok: true, conversationId: data.conversationId })
       } catch {
