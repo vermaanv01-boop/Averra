@@ -7,6 +7,46 @@ const urlPattern = /^https?:\/\/\S+$/i
 
 const userSchema = new Schema(
   {
+    role: {
+      type: String,
+      enum: USER_ROLES,
+      default: 'user',
+      required: true,
+      index: true
+    },
+    accountStatus: {
+      type: String,
+      enum: ACCOUNT_STATUSES,
+      default: 'active',
+      required: true,
+      index: true
+    },
+    suspension: {
+      reason: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+        default: ''
+      },
+      suspendedAt: {
+        type: Date,
+        default: null
+      },
+      suspendedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+      },
+      restoredAt: {
+        type: Date,
+        default: null
+      },
+      restoredBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+      }
+    },
     name: {
       type: String,
       required: true,
