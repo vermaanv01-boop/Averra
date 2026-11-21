@@ -4,6 +4,17 @@ const AppError = require('../utils/AppError')
 const { buildSchedule } = require('../utils/dateTime')
 const { SESSION_ACTIVE_STATUSES } = require('../utils/constants')
 const { buildPagination } = require('../utils/pagination')
+const notificationService = require('./notification.service')
+
+const idString = (value) => {
+  if (!value) return null
+  return value._id ? value._id.toString() : value.toString()
+}
+
+const otherParticipant = (session, userId) =>
+  (session.participants || [])
+    .map(idString)
+    .find((participantId) => participantId && participantId !== idString(userId))
 
 const sortOptions = {
   upcoming: { startAt: 1 },
