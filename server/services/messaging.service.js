@@ -98,14 +98,16 @@ const ensureConversationForRequest = async (requestId, session = null) => {
   const participants = [request.sender.toString(), request.recipient.toString()]
 
   try {
+    const options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    if (session) options.session = session
     return await Conversation.findOneAndUpdate(
       { exchangeRequest: request._id },
       { $setOnInsert: { participants, exchangeRequest: request._id } },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      options
     )
   } catch (error) {
     if (error.code === 11000) {
-      return Conversation.findOne({ exchangeRequest: request._id })
+      return transaction.withSession(Conversation.findOne({ exchangeRequest: request._id }), session)
     }
     throw error
   }
