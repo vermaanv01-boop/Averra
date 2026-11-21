@@ -53,7 +53,13 @@ const NOTIFICATION_TYPES = [
 
 const NOTIFICATION_CATEGORIES = ['exchangeRequests', 'sessions', 'messages']
 
-const NOTIFICATION_ENTITY_TYPES = ['ExchangeRequest', 'Session', 'Conversation', 'Message']
+const NOTIFICATION_ENTITY_TYPES = [
+  'ExchangeRequest',
+  'Session',
+  'Conversation',
+  'Message',
+  'Review'
+]
 
 const NOTIFICATION_TYPE_CATEGORY = {
   exchange_request: 'exchangeRequests',
