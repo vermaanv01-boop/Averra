@@ -257,4 +257,4 @@ skillswap/
     └── validators/         Input and environment validation
 ```
 
-The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, real-time messaging, and centralized notifications) is implemented. The frontend remains a minimal foundation; no messaging or notification UI is included.
+The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, real-time messaging, centralized notifications, and reviews/ratings/reputation) is implemented. Admin-protected HTTP moderation endpoints remain blocked until role-based admin authorization is added. The frontend remains a minimal foundation; no messaging, notification, or review UI is included.
