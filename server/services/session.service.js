@@ -488,7 +488,7 @@ const complete = async (userId, sessionId) => {
       message: `The session was marked as completed: ${current.title}.`,
       relatedEntityId: sessionId,
       relatedEntityType: 'Session',
-      eventId: 'completed'
+      eventId: `${sessionId}:completed`
     })
   })
 
