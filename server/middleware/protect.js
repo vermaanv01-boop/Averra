@@ -28,7 +28,7 @@ const protect = async (req, res, next) => {
     }
 
     req.user = user
-    req.token = { jti: payload.jti, exp: payload.exp }
+    req.token = { jti: payload.jti, exp: payload.exp, sub: payload.sub }
     next()
   } catch (error) {
     if (error instanceof AppError) {
