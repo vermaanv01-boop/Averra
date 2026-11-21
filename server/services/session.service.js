@@ -394,6 +394,20 @@ const respondToReschedule = async (userId, sessionId, proposalId, action) => {
   proposal.resolvedBy = userId
   await session.save()
 
+  await notificationService.notifySafely({
+    recipientId: idString(proposal.proposedBy),
+    actorId: idString(userId),
+    type: 'session_rescheduled',
+    title: action === 'accept' ? 'Session reschedule accepted' : 'Session reschedule rejected',
+    message:
+      action === 'accept'
+        ? `Your proposed new time for ${session.title} was accepted.`
+        : `Your proposed new time for ${session.title} was rejected.`,
+    relatedEntityId: sessionId,
+    relatedEntityType: 'Session',
+    eventId: `reschedule:${proposal._id.toString()}:${action}`
+  })
+
   return getByIdForUser(userId, sessionId)
 }
 
