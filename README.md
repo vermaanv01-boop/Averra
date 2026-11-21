@@ -277,6 +277,18 @@ Server to client:
 
 Socket delivery failures are logged and do not roll back the persisted notification or the originating business operation.
 
+## Reliability and production hardening
+
+Backend reliability uses MongoDB for persistent state and optional Redis for cross-instance state. Logout revocation is stored in the `RevokedToken` collection with a TTL index, so a revoked token remains invalid across restarts and backend instances until its natural expiration. Exchange requests, sessions, messages, and reviews use transaction boundaries when MongoDB supports them; standalone deployments log a warning and continue with a non-transactional fallback. Message creation uses an atomic upsert keyed by conversation, sender, and client message id, so retries are idempotent under concurrency.
+
+Notifications are written through a transactional outbox. Events are enqueued with the originating business write, dispatched after commit, retried with exponential backoff, dead-lettered after `OUTBOX_MAX_ATTEMPTS`, and recovered from stale claims by the outbox worker. A unique `eventId` and notification `dedupeKey` prevent duplicate delivery.
+
+Production startup fails fast when `JWT_SECRET`, `MONGODB_URI`, or `CLIENT_ORIGIN` is missing, or when neither `REDIS_URL` nor `ALLOW_INSECURE_NO_REDIS=true` is set. Redis is optional only for local development or an explicitly acknowledged single-instance production deployment; multi-instance deployments require `REDIS_URL` for Socket.IO rooms, presence, typing, and rate limits. Use `rediss://` for TLS Redis and configure `TRUST_PROXY` when running behind a proxy.
+
+Logs are structured JSON in production and include request IDs returned in the `X-Request-Id` response header. Sensitive fields such as passwords, tokens, secrets, cookies, and authorization headers are redacted. `/health/ready` reports MongoDB connectivity and, when required, Redis readiness. `SIGINT` and `SIGTERM` trigger graceful shutdown of the outbox worker, Socket.IO, HTTP connections, Redis, and MongoDB within `SHUTDOWN_TIMEOUT_MS`.
+
+To exercise Redis-specific tests, set `REDIS_TEST_URL` to a disposable Redis instance before running `npm run test --workspace server`; without it, the multi-instance tests are skipped and local state tests still run.
+
 ## Project structure
 
 ```text
@@ -304,4 +316,4 @@ skillswap/
     └── validators/         Input and environment validation
 ```
 
-The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, real-time messaging, centralized notifications, reviews/ratings/reputation, and admin/platform management) is implemented. The frontend remains a minimal foundation; no messaging, notification, review, or admin UI is included.
+The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, real-time messaging, centralized notifications, reviews/ratings/reputation, admin/platform management, and production reliability hardening) is implemented. The frontend remains a minimal foundation; no messaging, notification, review, or admin UI is included.
