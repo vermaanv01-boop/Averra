@@ -695,8 +695,8 @@ describe('Review notifications and access control', () => {
     )
     assert.equal(unknownExchange.status, 404, JSON.stringify(unknownExchange.body))
 
-    const notCompleted = await createExchange('notcompleted', sender, recipient, true)
-    const pendingReview = await postReview(recipient.token, notCompleted)
-    assert.equal(pendingReview.status, 201, JSON.stringify(pendingReview.body))
+    const pending = await createExchange('pendingreview', sender, recipient, false)
+    const pendingReview = await postReview(recipient.token, pending)
+    assert.equal(pendingReview.status, 409, JSON.stringify(pendingReview.body))
   })
 })
