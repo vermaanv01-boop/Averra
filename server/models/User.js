@@ -127,6 +127,24 @@ const userSchema = new Schema(
   { timestamps: true }
 )
 
+userSchema.index({ accountStatus: 1, role: 1 })
+userSchema.index({ 'suspension.suspendedAt': -1 })
+
+userSchema.pre('validate', function (next) {
+  if (this.accountStatus === 'suspended') {
+    if (!this.suspension?.reason) {
+      this.invalidate('suspension.reason', 'A suspension reason is required')
+    }
+    if (!this.suspension?.suspendedAt) {
+      this.invalidate('suspension.suspendedAt', 'A suspension timestamp is required')
+    }
+    if (!this.suspension?.suspendedBy) {
+      this.invalidate('suspension.suspendedBy', 'A suspending admin is required')
+    }
+  }
+  next()
+})
+
 const removePrivateFields = (document, returnedObject) => {
   returnedObject.id = returnedObject._id.toString()
   delete returnedObject._id
