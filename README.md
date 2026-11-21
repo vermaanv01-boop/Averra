@@ -76,6 +76,7 @@ Run these from the repository root:
 | `npm run dev:client` | Run only the Vite client |
 | `npm run build` | Create the production client build in `client/dist` |
 | `npm run start` | Start the Express server in production mode |
+| `npm run admin:bootstrap` | Create or promote the first administrator from `ADMIN_*` variables |
 | `npm run preview` | Preview the production client build locally |
 | `npm run test --workspace server` | Run the backend test suite against an in-memory MongoDB |
 
