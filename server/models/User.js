@@ -71,6 +71,16 @@ const userSchema = new Schema(
       exchangeRequests: { type: Boolean, default: true },
       sessions: { type: Boolean, default: true },
       messages: { type: Boolean, default: true }
+    },
+    reputation: {
+      totalReviews: { type: Number, default: 0, min: 0 },
+      averageOverallRating: { type: Number, default: 0, min: 0, max: 5 },
+      averageTeachingRating: { type: Number, default: 0, min: 0, max: 5 },
+      averageLearningRating: { type: Number, default: 0, min: 0, max: 5 },
+      ratingDistribution: { type: [Number], default: [0, 0, 0, 0, 0] },
+      completedExchanges: { type: Number, default: 0, min: 0 },
+      score: { type: Number, default: 0, min: 0, max: 5 },
+      recalculatedAt: { type: Date, default: null }
     }
   },
   { timestamps: true }
