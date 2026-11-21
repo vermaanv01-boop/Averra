@@ -293,35 +293,37 @@ const listCompleted = (userId, query) => list(userId, query, { status: 'complete
 const listCancelled = (userId, query) => list(userId, query, { status: 'cancelled' })
 
 const respondToInvitation = async (userId, sessionId, action) => {
-  const session = await findSession(sessionId)
-  assertParticipant(session, userId)
-  assertResponder(session, userId)
+  await transaction.withDbTransaction(async (session) => {
+    const current = await findSession(sessionId, session)
+    assertParticipant(current, userId)
+    assertResponder(current, userId)
 
-  if (session.status !== 'pending') {
-    throw new AppError('Only pending sessions can be accepted or declined', 409)
-  }
+    if (current.status !== 'pending') {
+      throw new AppError('Only pending sessions can be accepted or declined', 409)
+    }
 
-  if (action === 'accept') {
-    await assertNoConflicts(session.participants, session.startAt, session.endAt, session._id)
-    session.status = 'confirmed'
-  } else {
-    session.status = 'declined'
-  }
+    if (action === 'accept') {
+      await assertNoConflicts(current.participants, current.startAt, current.endAt, current._id, session)
+      current.status = 'confirmed'
+    } else {
+      current.status = 'declined'
+    }
 
-  await session.save()
+    await current.save({ session })
 
-  await notificationService.notifySafely({
-    recipientId: idString(session.proposedBy),
-    actorId: idString(userId),
-    type: action === 'accept' ? 'session_confirmed' : 'session_declined',
-    title: action === 'accept' ? 'Session confirmed' : 'Session declined',
-    message:
-      action === 'accept'
-        ? `Your session invitation was confirmed: ${session.title}.`
-        : `Your session invitation was declined: ${session.title}.`,
-    relatedEntityId: sessionId,
-    relatedEntityType: 'Session',
-    eventId: action
+    await notificationService.notifySafely({
+      recipientId: idString(current.proposedBy),
+      actorId: idString(userId),
+      type: action === 'accept' ? 'session_confirmed' : 'session_declined',
+      title: action === 'accept' ? 'Session confirmed' : 'Session declined',
+      message:
+        action === 'accept'
+          ? `Your session invitation was confirmed: ${current.title}.`
+          : `Your session invitation was declined: ${current.title}.`,
+      relatedEntityId: sessionId,
+      relatedEntityType: 'Session',
+      eventId: action
+    })
   })
 
   return getByIdForUser(userId, sessionId)
