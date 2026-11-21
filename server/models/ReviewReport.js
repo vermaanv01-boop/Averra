@@ -28,12 +28,41 @@ const reviewReportSchema = new Schema(
       trim: true,
       maxlength: 500,
       default: ''
+    },
+    status: {
+      type: String,
+      enum: REPORT_STATUSES,
+      default: 'pending'
+    },
+    resolution: {
+      moderator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+      },
+      action: {
+        type: String,
+        enum: REPORT_ACTIONS,
+        default: null
+      },
+      reason: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+        default: ''
+      },
+      resolvedAt: {
+        type: Date,
+        default: null
+      }
     }
   },
   { timestamps: true }
 )
 
 reviewReportSchema.index({ review: 1, reporter: 1 }, { unique: true })
+reviewReportSchema.index({ status: 1, createdAt: -1 })
+reviewReportSchema.index({ reason: 1, status: 1 })
 
 const removeVersion = (document, returnedObject) => {
   returnedObject.id = returnedObject._id.toString()
