@@ -1,5 +1,9 @@
 const { Schema, model } = require('mongoose')
-const { REVIEW_REPORT_REASONS } = require('../utils/constants')
+const {
+  REVIEW_REPORT_REASONS,
+  REPORT_STATUSES,
+  REPORT_ACTIONS
+} = require('../utils/constants')
 
 const reviewReportSchema = new Schema(
   {
