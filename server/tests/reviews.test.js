@@ -618,9 +618,9 @@ describe('Review notifications and access control', () => {
     const recipient = await registerUser('notifyb')
     const requestId = await completeExchange('notify', sender, recipient)
 
-    const socket = createSocket(recipient.token)
+    const socket = createSocket(sender.token)
     await waitConnected(socket)
-    await waitForRoom(`user:${recipient.user.id}`, socket.id)
+    await waitForRoom(`user:${sender.user.id}`, socket.id)
     const eventPromise = onceEvent(socket, 'notification:new')
 
     const response = await postReview(recipient.token, requestId)
