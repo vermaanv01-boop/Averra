@@ -37,8 +37,7 @@ describe('Production configuration', () => {
       NODE_ENV: 'production',
       JWT_SECRET: '',
       MONGODB_URI: '',
-      REDIS_URL: '',
-      ALLOW_INSECURE_NO_REDIS: 'false'
+      REDIS_URL: ''
     })
 
     assert.notEqual(result.status, 0)
