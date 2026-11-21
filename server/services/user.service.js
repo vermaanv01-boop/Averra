@@ -20,7 +20,14 @@ const getByUsername = async (username) => {
     throw new AppError('User not found', 404)
   }
 
-  const { email, passwordHash, notificationPreferences, ...publicProfile } = toPublicUser(user)
+  const {
+    email,
+    passwordHash,
+    notificationPreferences,
+    accountStatus,
+    suspension,
+    ...publicProfile
+  } = toPublicUser(user)
   return publicProfile
 }
 
