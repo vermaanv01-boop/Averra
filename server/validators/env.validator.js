@@ -1,6 +1,9 @@
 const { z } = require('zod')
 
-const booleanFromEnv = z.enum(['true', 'false']).transform((value) => value === 'true')
+const booleanFromEnv = z.preprocess(
+  (value) => (value === undefined ? 'false' : value),
+  z.enum(['true', 'false']).transform((value) => value === 'true')
+)
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
