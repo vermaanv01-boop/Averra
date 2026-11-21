@@ -66,6 +66,11 @@ const userSchema = new Schema(
           values.every((value) => value.trim().length > 0 && value.length <= 50),
         message: 'interests must contain at most 20 non-empty values of 50 characters or fewer'
       }
+    },
+    notificationPreferences: {
+      exchangeRequests: { type: Boolean, default: true },
+      sessions: { type: Boolean, default: true },
+      messages: { type: Boolean, default: true }
     }
   },
   { timestamps: true }
