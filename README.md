@@ -52,6 +52,7 @@ SkillSwap is a full-stack application scaffold built as an npm workspaces monore
 | `AUTH_RATE_LIMIT_MAX` | No | `10` | Maximum registration/login requests per window per IP |
 | `MESSAGE_RATE_LIMIT_WINDOW_MS` | No | `60000` | Message rate-limit window in milliseconds |
 | `MESSAGE_RATE_LIMIT_MAX` | No | `30` | Maximum messages a user may send per message window (REST and Socket.IO) |
+| `REVIEW_REPORT_THRESHOLD` | No | `3` | Number of unique reports that automatically flags a review for moderation |
 | `JWT_SECRET` | Production only | none | Secret used to sign access tokens; required in production |
 | `JWT_EXPIRES_IN` | No | `7d` | Access token lifetime |
 | `BCRYPT_SALT_ROUNDS` | No | `12` | Password hashing cost |
@@ -131,6 +132,13 @@ Successful responses use `{ "success": true, "data": ... }`; errors use `{ "succ
 | `DELETE` | `/api/notifications/:id` | Yes | Delete one of the user's notifications |
 | `GET` | `/api/notifications/preferences` | Yes | Get notification category preferences |
 | `PATCH` | `/api/notifications/preferences` | Yes | Update `exchangeRequests`, `sessions`, and/or `messages` preferences |
+| `POST` | `/api/reviews` | Yes | Review the other participant of a completed exchange |
+| `GET` | `/api/reviews/user/:userId` | Yes | List visible reviews received by a user (`page`, `limit`, `sort`) |
+| `GET` | `/api/reviews/exchange/:exchangeRequestId` | Yes | List visible reviews for a completed exchange (`page`, `limit`, `sort`) |
+| `GET` | `/api/reviews/:id` | Yes | Get one visible review |
+| `PATCH` | `/api/reviews/:id` | Yes | Edit the authenticated user's own review |
+| `DELETE` | `/api/reviews/:id` | Yes | Delete the authenticated user's own review |
+| `POST` | `/api/reviews/:id/report` | Yes | Report a review (`reason`, optional `details`) |
 
 Session proposals require an accepted exchange request and derive both participants from that request. Times are sent as a local `scheduledDate`, `startTime`, `duration`, and IANA `timezone`; the service stores `startAt`/`endAt` in UTC, rejects invalid or DST-nonexistent local times, and blocks overlapping confirmed sessions for the same participants.
 
