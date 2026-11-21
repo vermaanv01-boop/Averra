@@ -8,27 +8,27 @@ const message = {
   message: 'Too many requests, please try again later.'
 }
 
-const store = config.redis.mode === 'redis'
-  ? new RedisStore({
-    prefix: 'averra:rl:',
+const createStore = (prefix) => config.redis.mode !== 'redis'
+  ? undefined
+  : new RedisStore({
+    prefix: `averra:rl:${prefix}:`,
     sendCommand: async (...args) => {
       const client = await redisService.waitForReady()
       return client.call(...args)
     }
   })
-  : undefined
 
-const options = (limit) => ({
+const options = (limit, prefix) => ({
   windowMs: config.rateLimit.windowMs,
   limit,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message,
-  ...(store ? { store } : {})
+  ...(prefix ? { store: createStore(prefix) } : {})
 })
 
 const rateLimiter = rateLimit(options(config.rateLimit.max))
-const authLimiter = rateLimit(options(config.rateLimit.authMax))
-const sensitiveLimiter = rateLimit(options(config.rateLimit.sensitiveMax))
+const authLimiter = rateLimit(options(config.rateLimit.authMax, 'auth'))
+const sensitiveLimiter = rateLimit(options(config.rateLimit.sensitiveMax, 'sensitive'))
 
 module.exports = { rateLimiter, authLimiter, sensitiveLimiter }
