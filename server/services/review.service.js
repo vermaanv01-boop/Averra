@@ -91,46 +91,52 @@ const create = async (userId, payload) => {
     throw new AppError('You cannot review yourself', 400)
   }
 
-  const duplicate = await Review.exists({ exchangeRequest: request._id, reviewer: userId })
-  if (duplicate) {
-    throw new AppError('You have already reviewed this exchange', 409)
-  }
-
-  let review
   try {
-    review = await Review.create({
-      exchangeRequest: request._id,
-      reviewer: userId,
-      reviewee: revieweeId,
-      overallRating: payload.overallRating,
-      teachingRating: payload.teachingRating,
-      learningRating: payload.learningRating,
-      comment: payload.comment,
-      moderationHistory: [{ status: 'visible', reason: 'created', moderatedBy: null }]
+    const result = await transaction.withDbTransaction(async (session) => {
+      const duplicate = await transaction.withSession(
+        Review.exists({ exchangeRequest: request._id, reviewer: userId }),
+        session
+      )
+      if (duplicate) {
+        throw new AppError('You have already reviewed this exchange', 409)
+      }
+
+      const review = await transaction.createWithSession(Review, {
+        exchangeRequest: request._id,
+        reviewer: userId,
+        reviewee: revieweeId,
+        overallRating: payload.overallRating,
+        teachingRating: payload.teachingRating,
+        learningRating: payload.learningRating,
+        comment: payload.comment,
+        moderationHistory: [{ status: 'visible', reason: 'created', moderatedBy: null }]
+      }, session)
+
+      await notificationService.notifySafely({
+        recipientId: revieweeId,
+        actorId: userId,
+        type: 'review_received',
+        title: 'You received a review',
+        message: 'A participant left a review for your completed exchange.',
+        relatedEntityId: review.id,
+        relatedEntityType: 'Review',
+        eventId: review.id
+      })
+
+      return { reviewId: review.id }
     })
+
+    await ratingService.recalculateSafely(revieweeId)
+    const review = await Review.findById(result.reviewId)
+      .populate('reviewer', 'name username profileImage')
+      .populate('reviewee', 'name username profileImage')
+    return toReviewDto(review)
   } catch (error) {
     if (error.code === 11000) {
       throw new AppError('You have already reviewed this exchange', 409)
     }
     throw error
   }
-
-  await ratingService.recalculateSafely(revieweeId)
-
-  await notificationService.notifySafely({
-    recipientId: revieweeId,
-    actorId: userId,
-    type: 'review_received',
-    title: 'You received a review',
-    message: 'A participant left a review for your completed exchange.',
-    relatedEntityId: review.id,
-    relatedEntityType: 'Review',
-    eventId: review.id
-  })
-
-  await review.populate('reviewer', 'name username profileImage')
-  await review.populate('reviewee', 'name username profileImage')
-  return toReviewDto(review)
 }
 
 const listForUser = async (targetUserId, query) => {
