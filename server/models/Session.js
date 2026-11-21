@@ -196,6 +196,13 @@ const sessionSchema = new Schema(
 sessionSchema.index({ participants: 1, startAt: 1 })
 sessionSchema.index({ exchangeRequest: 1, status: 1 })
 sessionSchema.index({ status: 1, startAt: 1 })
+sessionSchema.index(
+  { exchangeRequest: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: { $in: ['pending', 'confirmed', 'reschedule_requested'] } }
+  }
+)
 
 const removeVersion = (document, returnedObject) => {
   returnedObject.id = returnedObject._id.toString()
