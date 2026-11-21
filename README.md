@@ -244,7 +244,7 @@ Server to client:
 | `presence:online` | `{ userId }` | An authorized contact came online |
 | `presence:offline` | `{ userId }` | An authorized contact went offline after their final socket disconnected |
 
-Presence and typing are in-memory only and are never written to MongoDB. Multiple connections per user are supported. Message sending is rate-limited per user across both REST and Socket.IO.
+Presence, typing, and message rate-limit counters use a Redis-backed shared store when `REDIS_URL` is configured and a local in-process store otherwise; none of them are written to MongoDB. Multiple connections per user are supported, and Socket.IO uses the Redis adapter in multi-instance deployments. Message sending is rate-limited per user across both REST and Socket.IO.
 
 ## Notifications
 
