@@ -130,7 +130,7 @@ const initSocket = (server) => {
         return respond(callback, { ok: false, error: 'Conversation not found' })
       }
 
-      typing.stop(data.conversationId, user.id)
+      await typing.stop(data.conversationId, user.id, socket.id)
       respond(callback, { ok: true })
     })
 
