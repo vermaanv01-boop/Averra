@@ -14,6 +14,7 @@ const conversationRoutes = require('./routes/conversation.routes')
 const messageRoutes = require('./routes/message.routes')
 const notificationRoutes = require('./routes/notification.routes')
 const reviewRoutes = require('./routes/review.routes')
+const adminRoutes = require('./routes/admin.routes')
 const { notFound, errorHandler } = require('./middleware/errorHandler')
 
 const app = express()
