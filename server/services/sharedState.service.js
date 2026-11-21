@@ -195,7 +195,7 @@ const createRedisState = (redis) => {
 const createSharedState = ({ mode = config.redis.mode, redis = redisService } = {}) =>
   mode === 'redis' ? createRedisState(redis) : createLocalState()
 
-const sharedState = createSharedState()
+let sharedState = createSharedState()
 
 const configureSharedState = (next) => {
   sharedState = next
