@@ -67,10 +67,15 @@ notificationSchema.index({ recipient: 1, isRead: 1, type: 1, createdAt: -1 })
 notificationSchema.index({ recipient: 1, createdAt: -1 })
 notificationSchema.index({ dedupeKey: 1 }, { unique: true, sparse: true })
 
-notificationSchema.validate(
-  (document) => Boolean(document.relatedEntity) === Boolean(document.relatedEntityType),
-  'relatedEntity and relatedEntityType must be provided together'
-)
+notificationSchema.pre('validate', function (next) {
+  if (Boolean(this.relatedEntity) !== Boolean(this.relatedEntityType)) {
+    this.invalidate(
+      'relatedEntityType',
+      'relatedEntity and relatedEntityType must be provided together'
+    )
+  }
+  next()
+})
 
 const removeInternalFields = (document, returnedObject) => {
   returnedObject.id = returnedObject._id.toString()
