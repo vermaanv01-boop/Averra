@@ -202,7 +202,7 @@ Presence and typing are in-memory only and are never written to MongoDB. Multipl
 
 ## Notifications
 
-Notifications are generated centrally by backend services from business events and stored in MongoDB before any real-time delivery. Supported types are `exchange_request`, `exchange_accepted`, `exchange_rejected`, `exchange_cancelled`, `session_invitation`, `session_confirmed`, `session_declined`, `session_rescheduled`, `session_cancelled`, `session_completed`, and `new_message`. A notification stores its recipient, optional acting user, type, title, message, optional related entity, creation timestamp, read state, and a read timestamp.
+Notifications are generated centrally by backend services from business events and stored in MongoDB before any real-time delivery. Supported types are `exchange_request`, `exchange_accepted`, `exchange_rejected`, `exchange_cancelled`, `session_invitation`, `session_confirmed`, `session_declined`, `session_rescheduled`, `session_cancelled`, `session_completed`, `new_message`, and `review_received`. A notification stores its recipient, optional acting user, type, title, message, optional related entity, creation timestamp, read state, and a read timestamp.
 
 Generated events:
 
