@@ -53,6 +53,7 @@ describe('Production configuration', () => {
       NODE_ENV: 'production',
       JWT_SECRET: 'production-only-secret',
       MONGODB_URI: 'mongodb://127.0.0.1:27017/averra',
+      CLIENT_ORIGIN: 'http://localhost:5173',
       REDIS_URL: '',
       ALLOW_INSECURE_NO_REDIS: 'true',
       JWT_EXPIRES_IN: '7d'
