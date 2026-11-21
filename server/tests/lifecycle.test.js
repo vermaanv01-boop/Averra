@@ -17,7 +17,9 @@ const describeRedis = redisTestUrl ? describe : describe.skip
 
 const runConfigCheck = (overrides) => {
   const childEnv = { ...process.env, ...overrides }
-  delete childEnv.CLIENT_ORIGIN
+  if (!Object.prototype.hasOwnProperty.call(overrides, 'CLIENT_ORIGIN')) {
+    delete childEnv.CLIENT_ORIGIN
+  }
 
   return spawnSync(
     process.execPath,
