@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose')
+const { USER_ROLES, ACCOUNT_STATUSES } = require('../utils/constants')
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const usernamePattern = /^[a-z0-9_]+$/
