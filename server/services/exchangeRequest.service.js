@@ -255,6 +255,13 @@ const transition = async (userId, requestId, action) => {
     await messagingService.ensureConversationForRequest(requestId)
   }
 
+  if (action === 'complete') {
+    await Promise.all([
+      ratingService.recalculateSafely(request.sender.toString()),
+      ratingService.recalculateSafely(request.recipient.toString())
+    ])
+  }
+
   const notification = transitionNotifications[action]
   if (notification) {
     await notificationService.notifySafely({
