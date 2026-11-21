@@ -29,6 +29,11 @@ const initSocket = (server) => {
     cors: { origin: config.clientOrigin, credentials: true }
   })
 
+  const pubsub = redisService.getPubSub()
+  if (pubsub) {
+    io.adapter(createAdapter(pubsub.pub, pubsub.sub))
+  }
+
   events.setIO(io)
   io.use(authenticateSocket)
 
