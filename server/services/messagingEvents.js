@@ -19,4 +19,23 @@ const emitToUser = (userId, event, payload) => {
   io.to(userRoom(userId)).emit(event, payload)
 }
 
-module.exports = { setIO, conversationRoom, userRoom, emitToConversation, emitToUser }
+const isViewingConversation = (conversationId, userId) => {
+  if (!io) return false
+  const room = io.sockets.adapter.rooms.get(conversationRoom(conversationId))
+  if (!room) return false
+
+  for (const socketId of room) {
+    const socket = io.sockets.sockets.get(socketId)
+    if (socket?.data?.user?.id?.toString() === userId.toString()) return true
+  }
+  return false
+}
+
+module.exports = {
+  setIO,
+  conversationRoom,
+  userRoom,
+  emitToConversation,
+  emitToUser,
+  isViewingConversation
+}
