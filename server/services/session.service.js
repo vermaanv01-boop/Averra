@@ -114,8 +114,8 @@ const toSessionDto = (session) => ({
   updatedAt: session.updatedAt
 })
 
-const findSession = async (sessionId) => {
-  const session = await Session.findById(sessionId)
+const findSession = async (sessionId, dbSession = null) => {
+  const session = await transaction.withSession(Session.findById(sessionId), dbSession)
 
   if (!session) {
     throw new AppError('Session not found', 404)
