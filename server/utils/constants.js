@@ -47,7 +47,8 @@ const NOTIFICATION_TYPES = [
   'session_rescheduled',
   'session_cancelled',
   'session_completed',
-  'new_message'
+  'new_message',
+  'review_received'
 ]
 
 const NOTIFICATION_CATEGORIES = ['exchangeRequests', 'sessions', 'messages']
