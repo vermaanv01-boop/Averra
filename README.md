@@ -226,4 +226,4 @@ skillswap/
     └── validators/         Input and environment validation
 ```
 
-The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, and real-time messaging) is implemented. The frontend remains a minimal foundation; no messaging UI is included.
+The backend core (authentication, profiles, skills, discovery, exchange requests, session scheduling, real-time messaging, and centralized notifications) is implemented. The frontend remains a minimal foundation; no messaging or notification UI is included.
