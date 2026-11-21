@@ -916,6 +916,8 @@ describe('Real-time notifications', () => {
     const recipient = await registerUser('eventsrecipient')
     const socket = await connectSocket(recipient.token, recipient.user.id)
 
+    const newEvent = onceEvent(socket, 'notification:new')
+    const initialCount = onceEvent(socket, 'notification:unread-count')
     const created = await notificationService.notify({
       recipientId: recipient.user.id,
       actorId: actor.user.id,
@@ -924,6 +926,8 @@ describe('Real-time notifications', () => {
       message: 'Your request was accepted.',
       eventId: 'events-1'
     })
+    assert.equal((await newEvent).id, created.id)
+    assert.equal((await initialCount).unreadCount, 1)
 
     const readEvent = onceEvent(socket, 'notification:read')
     const readCount = onceEvent(socket, 'notification:unread-count')
