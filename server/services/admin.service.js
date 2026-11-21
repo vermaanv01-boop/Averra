@@ -315,14 +315,17 @@ const decideReport = async (actorId, reportId, { action, reason }) => {
   return getReport(admin.id, reportId)
 }
 
-const countByStatus = async (Model, statuses) => {
+const countByStatus = async (Model, field, statuses) => {
   const entries = await Promise.all(
-    statuses.map((status) => Model.countDocuments({ status }))
+    statuses.map((status) => Model.countDocuments({ [field]: status }))
   )
-  return { total: entries.reduce((sum, count) => sum + count, 0), ...statuses.reduce((acc, status, index) => {
-    acc[status] = entries[index]
-    return acc
-  }, {}) }
+  return {
+    total: entries.reduce((sum, count) => sum + count, 0),
+    ...statuses.reduce((acc, status, index) => {
+      acc[status] = entries[index]
+      return acc
+    }, {})
+  }
 }
 
 const statistics = async (actorId) => {
