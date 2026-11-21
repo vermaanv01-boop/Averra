@@ -117,5 +117,6 @@ module.exports = {
   normalizePreferences,
   toNotificationDto,
   isCategoryEnabled,
+  safeEmit,
   deliver
 }
