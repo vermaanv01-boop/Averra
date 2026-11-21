@@ -162,11 +162,11 @@ const waitForRoom = async (room, socketId) => {
   throw new Error(`timeout waiting for room ${room}`)
 }
 
-const connectSocket = async (token) => {
+const connectSocket = async (token, userId) => {
   const socket = createSocket(token)
   await waitConnected(socket)
-  await waitForRoom(`user:${socket.data.userId || ''}`, socket.id).catch(() => {})
-  await delay(60)
+  if (userId) await waitForRoom(`user:${userId}`, socket.id)
+  await delay(30)
   return socket
 }
 
