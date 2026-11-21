@@ -3,9 +3,8 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const config = require('../config/env')
 const User = require('../models/User')
+const RevokedToken = require('../models/RevokedToken')
 const AppError = require('../utils/AppError')
-
-const revokedTokens = new Map()
 
 const issueToken = (userId) => {
   const jti = randomUUID()
@@ -17,22 +16,13 @@ const issueToken = (userId) => {
 
 const toPublicUser = (user) => user.toObject()
 
-const purgeExpiredTokens = () => {
-  const now = Date.now()
-  for (const [jti, expiresAt] of revokedTokens) {
-    if (expiresAt <= now) {
-      revokedTokens.delete(jti)
-    }
-  }
-}
+const cleanupExpiredTokens = () =>
+  RevokedToken.deleteMany({ expiresAt: { $lte: new Date() } })
 
-const isTokenRevoked = (jti) => {
-  if (!jti || !revokedTokens.has(jti)) {
-    return false
-  }
-
-  purgeExpiredTokens()
-  return revokedTokens.has(jti)
+const isTokenRevoked = async (jti) => {
+  if (!jti) return false
+  const record = await RevokedToken.exists({ jti, expiresAt: { $gt: new Date() } })
+  return Boolean(record)
 }
 
 const register = async ({ name, username, email, password }) => {
@@ -82,13 +72,34 @@ const login = async ({ email, password }) => {
   return { user: toPublicUser(user), token }
 }
 
-const logout = (token) => {
-  if (!token?.jti || !token?.exp) {
-    return
-  }
+const logout = async (token) => {
+  if (!token?.jti || !token?.exp) return
 
-  revokedTokens.set(token.jti, token.exp * 1000)
-  purgeExpiredTokens()
+  const expiresAt = new Date(token.exp * 1000)
+  if (Number.isNaN(expiresAt.getTime()) || expiresAt.getTime() <= Date.now()) return
+
+  try {
+    await RevokedToken.updateOne(
+      { jti: token.jti },
+      {
+        $setOnInsert: {
+          jti: token.jti,
+          userId: token.sub || null,
+          expiresAt,
+          revokedAt: new Date()
+        }
+      },
+      { upsert: true }
+    )
+  } catch (error) {
+    if (error.code !== 11000) throw error
+  }
 }
 
-module.exports = { register, login, logout, isTokenRevoked }
+module.exports = {
+  register,
+  login,
+  logout,
+  isTokenRevoked,
+  cleanupExpiredTokens
+}
