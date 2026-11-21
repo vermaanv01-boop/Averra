@@ -161,6 +161,18 @@ const create = async (senderId, { recipientId, offeredSkillId, requestedSkillId 
       offeredSkill: offeredSkillId,
       requestedSkill: requestedSkillId
     })
+
+    await notificationService.notifySafely({
+      recipientId: userIdToString(recipientId),
+      actorId: userIdToString(senderId),
+      type: 'exchange_request',
+      title: 'New exchange request',
+      message: 'You received a new exchange request.',
+      relatedEntityId: request.id,
+      relatedEntityType: 'ExchangeRequest',
+      eventId: 'created'
+    })
+
     return getByIdForUser(userIdToString(senderId), request.id)
   } catch (error) {
     if (error.code === 11000) {
