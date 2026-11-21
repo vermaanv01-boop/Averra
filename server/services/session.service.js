@@ -5,6 +5,7 @@ const { buildSchedule } = require('../utils/dateTime')
 const { SESSION_ACTIVE_STATUSES } = require('../utils/constants')
 const { buildPagination } = require('../utils/pagination')
 const notificationService = require('./notification.service')
+const transaction = require('./transaction.service')
 
 const idString = (value) => {
   if (!value) return null
