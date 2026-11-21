@@ -34,8 +34,11 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['silent', 'error', 'warn', 'info', 'debug']).default('info'),
   MONGO_CONNECT_TIMEOUT_MS: z.coerce.number().int().positive().default(10000),
   MONGO_CONNECT_RETRIES: z.coerce.number().int().min(0).max(10).default(3),
-  MONGO_TRANSACTIONS_DISABLED: booleanFromEnv.default('false'),
-  OUTBOX_WORKER_ENABLED: booleanFromEnv.default('true'),
+  MONGO_TRANSACTIONS_DISABLED: booleanFromEnv,
+  OUTBOX_WORKER_ENABLED: z.preprocess(
+    (value) => (value === undefined ? 'true' : value),
+    z.enum(['true', 'false']).transform((value) => value === 'true')
+  ),
   OUTBOX_POLL_INTERVAL_MS: z.coerce.number().int().min(100).default(5000),
   OUTBOX_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(20).default(5),
   OUTBOX_CLAIM_TIMEOUT_MS: z.coerce.number().int().min(1000).default(60000),
