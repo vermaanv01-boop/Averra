@@ -75,7 +75,7 @@ const initSocket = (server) => {
         return respond(callback, { ok: false, error: 'Conversation not found' })
       }
 
-      const limit = messageRateLimit.consume(user.id)
+      const limit = await messageRateLimit.consume(user.id)
       if (!limit.allowed) {
         return respond(callback, { ok: false, error: 'Rate limit exceeded', code: 429 })
       }
