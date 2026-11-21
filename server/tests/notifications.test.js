@@ -327,7 +327,7 @@ describe('Notification creation', () => {
     assert.ok(created)
     assert.equal(await Notification.countDocuments({ recipient: recipient.user.id }), 1)
 
-    const socket = await connectSocket(recipient.token)
+    const socket = await connectSocket(recipient.token, recipient.user.id)
     const response = await getNotifications(recipient.token)
     assert.equal(response.body.data.notifications.length, 1)
     assert.equal(response.body.data.notifications[0].id, created.id)
@@ -617,6 +617,7 @@ describe('Notification preferences', () => {
 
   it('suppresses a disabled category without blocking the business operation', async () => {
     const pair = await createPair('suppress', true)
+    await Notification.deleteMany({})
     const conversationResponse = await request(app)
       .get('/api/conversations')
       .set(auth(pair.sender.token))
@@ -637,6 +638,7 @@ describe('Notification preferences', () => {
     assert.equal(await Notification.countDocuments({ recipient: pair.recipient.user.id }), 0)
 
     const requestPair = await createPair('suppress2', false)
+    await Notification.deleteMany({})
     await patch(requestPair.recipient.token, '/api/notifications/preferences', {
       exchangeRequests: false
     })
@@ -816,8 +818,8 @@ describe('Business event integration', () => {
       .set(auth(pair.sender.token))
     const conversationId = conversations.body.data.conversations[0].id
 
-    const recipientSocket = await connectSocket(pair.recipient.token)
-    const senderSocket = await connectSocket(pair.sender.token)
+    const recipientSocket = await connectSocket(pair.recipient.token, pair.recipient.user.id)
+    const senderSocket = await connectSocket(pair.sender.token, pair.sender.user.id)
     const joined = await emitAck(recipientSocket, 'conversation:join', { conversationId })
     assert.equal(joined.ok, true, JSON.stringify(joined))
 
@@ -876,9 +878,9 @@ describe('Real-time notifications', () => {
     const recipient = await registerUser('socketrecipient')
     const outsider = await registerUser('socketoutsider')
 
-    const firstSocket = await connectSocket(recipient.token)
-    const secondSocket = await connectSocket(recipient.token)
-    const outsiderSocket = await connectSocket(outsider.token)
+    const firstSocket = await connectSocket(recipient.token, recipient.user.id)
+    const secondSocket = await connectSocket(recipient.token, recipient.user.id)
+    const outsiderSocket = await connectSocket(outsider.token, outsider.user.id)
 
     let outsiderReceived = false
     outsiderSocket.on('notification:new', () => {
@@ -912,7 +914,7 @@ describe('Real-time notifications', () => {
   it('emits read, deleted and unread-count events for REST changes', async () => {
     const actor = await registerUser('eventsactor')
     const recipient = await registerUser('eventsrecipient')
-    const socket = await connectSocket(recipient.token)
+    const socket = await connectSocket(recipient.token, recipient.user.id)
 
     const created = await notificationService.notify({
       recipientId: recipient.user.id,
