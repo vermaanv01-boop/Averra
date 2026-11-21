@@ -1,23 +1,18 @@
+const { randomUUID } = require('crypto')
 const config = require('../config/env')
+const { getSharedState } = require('./sharedState.service')
 
-const attempts = new Map()
-
-const consume = (userId) => {
+const consume = async (userId) => {
   const key = userId.toString()
-  const now = Date.now()
-  const windowMs = config.rateLimit.messageWindowMs
-  const recent = (attempts.get(key) || []).filter((timestamp) => now - timestamp < windowMs)
-
-  if (recent.length >= config.rateLimit.messageMax) {
-    attempts.set(key, recent)
-    return { allowed: false, retryAfterMs: windowMs - (now - recent[0]) }
-  }
-
-  recent.push(now)
-  attempts.set(key, recent)
-  return { allowed: true, retryAfterMs: 0 }
+  const result = await getSharedState().consumeRateLimit(
+    key,
+    config.rateLimit.messageMax,
+    config.rateLimit.messageWindowMs,
+    randomUUID()
+  )
+  return { allowed: result.allowed, retryAfterMs: result.retryAfterMs }
 }
 
-const reset = () => attempts.clear()
+const reset = () => getSharedState().resetRateLimit()
 
 module.exports = { consume, reset }
