@@ -49,7 +49,14 @@ const register = async ({ name, username, email, password }) => {
   const passwordHash = await bcrypt.hash(password, config.bcryptSaltRounds)
 
   try {
-    const user = await User.create({ name, username, email, passwordHash })
+    const user = await User.create({
+      name,
+      username,
+      email,
+      passwordHash,
+      role: 'user',
+      accountStatus: 'active'
+    })
     const { token } = issueToken(user.id)
     return { user: toPublicUser(user), token }
   } catch (error) {
