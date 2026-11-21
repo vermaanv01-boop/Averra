@@ -70,22 +70,24 @@ const withDbTransaction = async (callback) => {
   const session = await mongoose.startSession()
   store.session = session
 
-  try {
-    let result
-    await session.withTransaction(
-      async () => {
-        result = await callback(session)
-      },
-      { readConcern: { level: 'snapshot' }, writeConcern: { w: 'majority' } }
-    )
-    await runHooks(store)
-    return result
-  } catch (error) {
-    store.afterCommit.length = 0
-    throw error
-  } finally {
-    await session.endSession()
-  }
+  return storage.run(store, async () => {
+    try {
+      let result
+      await session.withTransaction(
+        async () => {
+          result = await callback(session)
+        },
+        { readConcern: { level: 'snapshot' }, writeConcern: { w: 'majority' } }
+      )
+      await runHooks(store)
+      return result
+    } catch (error) {
+      store.afterCommit.length = 0
+      throw error
+    } finally {
+      await session.endSession()
+    }
+  })
 }
 
 const afterCommit = (hook) => {
