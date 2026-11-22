@@ -9,6 +9,7 @@ export default function UserCard({ user }) {
   const profilePath = `/app/users/${encodeURIComponent(user.username)}`
   const linkState = {
     skills: user.skills || [],
+    skillTypes: [...new Set((user.skills || []).map((skill) => skill.type).filter(Boolean))],
     from: `${location.pathname}${location.search}`
   }
 
