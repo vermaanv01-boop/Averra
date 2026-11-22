@@ -1,10 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Alert from '../components/ui/Alert.jsx'
 import Button from '../components/ui/Button.jsx'
 import Input from '../components/ui/Input.jsx'
 import { useAuth } from '../hooks/useAuth.js'
-import { useState } from 'react'
 
 export default function LoginPage() {
   const [values, setValues] = useState({ email: '', password: '' })
