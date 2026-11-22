@@ -24,9 +24,12 @@ export default function Alert({ variant = 'info', title, children, action, class
       className={cn('flex gap-3 rounded-lg border px-3.5 py-3 text-sm', styles[variant] || styles.info, className)}
     >
       <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-      <div className="space-y-1">
-        {title && <p className="font-medium">{title}</p>}
-        {children && <div className="leading-6">{children}</div>}
+      <div className="flex w-full flex-wrap items-start justify-between gap-3">
+        <div className="space-y-1">
+          {title && <p className="font-medium">{title}</p>}
+          {children && <div className="leading-6">{children}</div>}
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
       </div>
     </div>
   )
