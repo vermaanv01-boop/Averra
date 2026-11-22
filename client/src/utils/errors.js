@@ -8,3 +8,15 @@ export class ApiError extends Error {
     this.code = options.code ?? null
   }
 }
+
+export function getConflictDetails(error) {
+  if (!Array.isArray(error?.details)) return []
+  return error.details
+    .filter((detail) => detail && (detail.id || detail.title || detail.startAt))
+    .map((detail) => ({
+      id: detail.id || '',
+      title: detail.title || 'Conflicting session',
+      startAt: detail.startAt || '',
+      endAt: detail.endAt || ''
+    }))
+}
