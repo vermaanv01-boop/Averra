@@ -14,6 +14,7 @@ export default function MatchCard({ match, onRequest, disabled = false }) {
   ]
   const linkState = {
     skills: targetSkills,
+    skillTypes: [...new Set(targetSkills.map((skill) => skill.type).filter(Boolean))],
     from: `${location.pathname}${location.search}`
   }
 
