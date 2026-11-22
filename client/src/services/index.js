@@ -2,5 +2,6 @@ export { default as api, ApiError, isApiConfigured, subscribeToUnauthorized } fr
 export { authService } from './auth.service.js'
 export { discoveryService } from './discovery.service.js'
 export { exchangeRequestService } from './exchangeRequest.service.js'
+export { sessionService } from './session.service.js'
 export { skillService } from './skill.service.js'
 export { userService } from './user.service.js'
