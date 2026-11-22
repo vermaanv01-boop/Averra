@@ -27,6 +27,50 @@ export const DISCOVERY_SORTS = [
   { value: 'skills', label: 'Most matched skills' }
 ]
 
+export const SESSION_STATUSES = [
+  'pending',
+  'confirmed',
+  'declined',
+  'reschedule_requested',
+  'cancelled',
+  'completed'
+]
+
+export const SESSION_ACTIVE_STATUSES = ['pending', 'confirmed', 'reschedule_requested']
+
+export const SESSION_STATUS_LABELS = {
+  pending: 'Pending',
+  confirmed: 'Confirmed',
+  declined: 'Declined',
+  reschedule_requested: 'Reschedule proposed',
+  cancelled: 'Cancelled',
+  completed: 'Completed'
+}
+
+export const MEETING_METHODS = ['online', 'in-person', 'other']
+
+export const MEETING_METHOD_LABELS = {
+  online: 'Online',
+  'in-person': 'In person',
+  other: 'Other'
+}
+
+export const SESSION_TIMEZONES = [
+  'UTC',
+  'America/New_York',
+  'America/Chicago',
+  'America/Denver',
+  'America/Los_Angeles',
+  'America/Sao_Paulo',
+  'Europe/London',
+  'Europe/Paris',
+  'Europe/Berlin',
+  'Africa/Cairo',
+  'Asia/Kolkata',
+  'Asia/Tokyo',
+  'Australia/Sydney'
+]
+
 export const PROFILE_LIMITS = {
   name: { min: 2, max: 80 },
   username: { min: 3, max: 30 },
