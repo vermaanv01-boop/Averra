@@ -157,7 +157,8 @@ export function AuthProvider({ children }) {
   }, [loginAction.reset, registerAction.reset, logoutAction.reset, profileAction.reset])
 
   const status = isInitializing ? 'loading' : token ? 'authenticated' : 'unauthenticated'
-  const error = sessionError || loginAction.error || registerAction.error || logoutAction.error
+  const error =
+    sessionError || loginAction.error || registerAction.error || logoutAction.error || profileAction.error
 
   const value = useMemo(
     () => ({
@@ -166,14 +167,21 @@ export function AuthProvider({ children }) {
       status,
       error,
       isAuthenticated: status === 'authenticated',
-      isLoading: isInitializing || loginAction.loading || registerAction.loading || logoutAction.loading,
+      isLoading:
+        isInitializing ||
+        loginAction.loading ||
+        registerAction.loading ||
+        logoutAction.loading ||
+        profileAction.loading,
       loginLoading: loginAction.loading,
       registerLoading: registerAction.loading,
       logoutLoading: logoutAction.loading,
+      updateProfileLoading: profileAction.loading,
       login,
       register,
       logout,
       refreshUser,
+      updateProfile,
       clearError
     }),
     [
@@ -185,10 +193,12 @@ export function AuthProvider({ children }) {
       loginAction.loading,
       registerAction.loading,
       logoutAction.loading,
+      profileAction.loading,
       login,
       register,
       logout,
       refreshUser,
+      updateProfile,
       clearError
     ]
   )
