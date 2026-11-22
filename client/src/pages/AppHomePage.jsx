@@ -69,7 +69,12 @@ export default function AppHomePage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-4 text-sm">
-              {['Authenticated session', 'Protected application routes', 'API-backed profile and skills'].map(
+              {[
+                'Authenticated session',
+                'Protected application routes',
+                'API-backed profile and skills',
+                'Discovery and matching'
+              ].map(
                 (item) => (
                   <li key={item} className="flex items-center gap-3 text-ink-700">
                     <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-lavender-200 bg-lavender-50 text-lavender-700">
