@@ -107,7 +107,7 @@ export default function SkillFormDialog({
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" form={formId} loading={saving}>
+          <Button type="submit" form={formId} loading={saving} disabled={saving}>
             {isEditing ? 'Save changes' : 'Add skill'}
           </Button>
         </div>
