@@ -30,7 +30,8 @@ export default function SkillFormDialog({
   onClose,
   onCreate,
   onUpdate,
-  onSaved
+  onSaved,
+  saving = false
 }) {
   const formId = useId()
   const submittingRef = useRef(false)
