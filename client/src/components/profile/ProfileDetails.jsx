@@ -14,6 +14,10 @@ function formatDate(value) {
 export default function ProfileDetails({ user }) {
   const [imageFailed, setImageFailed] = useState(false)
   const showImage = user?.profileImage && !imageFailed
+
+  useEffect(() => {
+    setImageFailed(false)
+  }, [user?.profileImage])
   const reputation = user?.reputation
 
   const details = [
