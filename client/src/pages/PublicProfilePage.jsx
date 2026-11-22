@@ -74,7 +74,7 @@ export default function PublicProfilePage() {
       .getByUsername(username)
       .then((data) => {
         if (!active) return
-        setProfile(data)
+        setProfile(data?.user || null)
       })
       .catch((error) => {
         if (!active) return
