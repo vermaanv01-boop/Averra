@@ -120,6 +120,7 @@ export default function SkillFormDialog({
           required
           maxLength={SKILL_LIMITS.name.max}
           placeholder="e.g. Visual design"
+          disabled={saving}
           value={values.name}
           error={fieldErrors.name}
           onChange={(event) => updateField('name', event.target.value)}
