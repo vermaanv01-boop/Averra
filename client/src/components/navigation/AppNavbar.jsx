@@ -96,6 +96,9 @@ export default function AppNavbar() {
             <NavLink to="/app/profile" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
               Profile
             </NavLink>
+            <NavLink to="/app/sessions" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
+              Sessions
+            </NavLink>
             <NavLink to="/app/skills" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
               Skills
             </NavLink>

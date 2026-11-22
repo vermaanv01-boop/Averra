@@ -37,6 +37,9 @@ export default function AppHomePage() {
             <Link to="/app/profile" className={buttonStyles({ variant: 'secondary', size: 'sm' })}>
               View profile
             </Link>
+            <Link to="/app/sessions" className={buttonStyles({ variant: 'secondary', size: 'sm' })}>
+              View sessions
+            </Link>
             <Link to="/app/skills" className={buttonStyles({ size: 'sm' })}>
               Manage skills
             </Link>
