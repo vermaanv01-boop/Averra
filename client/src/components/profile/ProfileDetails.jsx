@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CalendarDays, MapPin } from 'lucide-react'
 import Avatar from '../ui/Avatar.jsx'
 import Badge from '../ui/Badge.jsx'
