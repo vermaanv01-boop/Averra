@@ -10,13 +10,9 @@ export default function ProtectedRoute() {
     return <LoadingScreen message="Checking your session…" />
   }
 
-  if (!isAuthenticatedFor(status)) {
+  if (status !== 'authenticated') {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   return <Outlet />
-}
-
-function isAuthenticatedFor(status) {
-  return status === 'authenticated'
 }
