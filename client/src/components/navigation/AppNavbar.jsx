@@ -39,6 +39,12 @@ export default function AppNavbar() {
             <NavLink to="/app" end className={navClass}>
               Overview
             </NavLink>
+            <NavLink to="/app/profile" className={navClass}>
+              Profile
+            </NavLink>
+            <NavLink to="/app/skills" className={navClass}>
+              Skills
+            </NavLink>
           </nav>
         </div>
 

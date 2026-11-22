@@ -33,6 +33,8 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="app" element={<AppHomePage />} />
+            <Route path="app/profile" element={<ProfilePage />} />
+            <Route path="app/skills" element={<SkillsPage />} />
           </Route>
         </Route>
       </Route>
