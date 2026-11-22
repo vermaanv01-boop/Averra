@@ -15,7 +15,7 @@ const icons = {
   error: CircleAlert
 }
 
-export default function Alert({ variant = 'info', title, children, className }) {
+export default function Alert({ variant = 'info', title, children, action, className }) {
   const Icon = icons[variant] || icons.info
 
   return (
