@@ -145,6 +145,7 @@ export default function SkillFormDialog({
             required
             placeholder="Select a level"
             options={proficiencyOptions}
+            disabled={saving}
             value={values.proficiency}
             error={fieldErrors.proficiency}
             onChange={(event) => updateField('proficiency', event.target.value)}
