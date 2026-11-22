@@ -95,7 +95,6 @@ export default function SkillFormDialog({
   }
 
   const detailMessages = mapApiDetails(formError).messages
-  const saving = false
 
   return (
     <Modal
