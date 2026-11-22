@@ -134,6 +134,7 @@ export default function SkillFormDialog({
             required
             placeholder="Select a category"
             options={categoryOptions}
+            disabled={saving}
             value={values.category}
             error={fieldErrors.category}
             onChange={(event) => updateField('category', event.target.value)}
