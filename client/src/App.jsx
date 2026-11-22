@@ -35,8 +35,10 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="app" element={<AppHomePage />} />
+            <Route path="app/discovery" element={<DiscoveryPage />} />
             <Route path="app/profile" element={<ProfilePage />} />
             <Route path="app/skills" element={<SkillsPage />} />
+            <Route path="app/users/:username" element={<PublicProfilePage />} />
           </Route>
         </Route>
       </Route>
