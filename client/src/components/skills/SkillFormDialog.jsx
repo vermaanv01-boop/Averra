@@ -158,6 +158,7 @@ export default function SkillFormDialog({
           maxLength={SKILL_LIMITS.experience.max}
           placeholder="Optional context about how you use this skill"
           helperText={`${values.experience.length}/${SKILL_LIMITS.experience.max} characters`}
+          disabled={saving}
           value={values.experience}
           error={fieldErrors.experience}
           onChange={(event) => updateField('experience', event.target.value)}
