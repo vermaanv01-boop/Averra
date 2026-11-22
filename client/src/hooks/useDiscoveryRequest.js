@@ -41,7 +41,7 @@ export default function useDiscoveryRequest(fetcher, params, enabled = true) {
     return () => {
       requestIdRef.current += 1
     }
-  }, [fetcher, serializedParams, reloadKey])
+  }, [fetcher, serializedParams, reloadKey, enabled])
 
   const reload = useCallback(() => setReloadKey((key) => key + 1), [])
 
