@@ -1,4 +1,6 @@
 export { default as api, ApiError, isApiConfigured, subscribeToUnauthorized } from './api.js'
 export { authService } from './auth.service.js'
+export { discoveryService } from './discovery.service.js'
+export { exchangeRequestService } from './exchangeRequest.service.js'
 export { skillService } from './skill.service.js'
 export { userService } from './user.service.js'
