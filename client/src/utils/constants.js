@@ -20,6 +20,13 @@ export const SKILL_TYPE_LABELS = {
   learn: 'Want to learn'
 }
 
+export const DISCOVERY_SORTS = [
+  { value: 'recent', label: 'Recently joined' },
+  { value: 'name', label: 'Name' },
+  { value: 'username', label: 'Username' },
+  { value: 'skills', label: 'Most matched skills' }
+]
+
 export const PROFILE_LIMITS = {
   name: { min: 2, max: 80 },
   username: { min: 3, max: 30 },
