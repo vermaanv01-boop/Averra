@@ -21,6 +21,7 @@ export function AuthProvider({ children }) {
   const loginAction = useAsyncAction(authService.login)
   const registerAction = useAsyncAction(authService.register)
   const logoutAction = useAsyncAction(authService.logout)
+  const profileAction = useAsyncAction(userService.updateMe)
 
   useEffect(() => {
     let active = true
