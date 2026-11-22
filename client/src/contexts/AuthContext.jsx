@@ -135,12 +135,26 @@ export function AuthProvider({ children }) {
     return data
   }, [])
 
+  const updateProfile = useCallback(
+    async (values) => {
+      const result = await profileAction.run(values)
+      if (result.data?.user) {
+        const currentToken = getStoredToken()
+        saveSession({ token: currentToken, user: result.data.user })
+        setUser(result.data.user)
+      }
+      return result
+    },
+    [profileAction.run]
+  )
+
   const clearError = useCallback(() => {
     setSessionError(null)
     loginAction.reset()
     registerAction.reset()
     logoutAction.reset()
-  }, [loginAction.reset, registerAction.reset, logoutAction.reset])
+    profileAction.reset()
+  }, [loginAction.reset, registerAction.reset, logoutAction.reset, profileAction.reset])
 
   const status = isInitializing ? 'loading' : token ? 'authenticated' : 'unauthenticated'
   const error = sessionError || loginAction.error || registerAction.error || logoutAction.error
