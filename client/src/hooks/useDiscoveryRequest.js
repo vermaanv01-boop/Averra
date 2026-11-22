@@ -7,13 +7,19 @@ function normalizeError(error) {
     : new ApiError(error?.message || 'Something went wrong. Please try again.')
 }
 
-export default function useDiscoveryRequest(fetcher, params) {
+export default function useDiscoveryRequest(fetcher, params, enabled = true) {
   const serializedParams = JSON.stringify(params)
   const requestIdRef = useRef(0)
   const [reloadKey, setReloadKey] = useState(0)
   const [state, setState] = useState({ items: [], pagination: null, loading: true, error: null })
 
   useEffect(() => {
+    if (!enabled) {
+      requestIdRef.current += 1
+      setState({ items: [], pagination: null, loading: false, error: null })
+      return undefined
+    }
+
     const requestId = ++requestIdRef.current
     setState((current) => ({ ...current, loading: true, error: null }))
 
