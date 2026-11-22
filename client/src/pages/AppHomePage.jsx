@@ -65,7 +65,7 @@ export default function AppHomePage() {
         <Card>
           <CardHeader>
             <CardTitle>Foundation ready</CardTitle>
-            <CardDescription>The core pieces are in place for the next phase.</CardDescription>
+            <CardDescription>The core pieces are in place for finding exchange partners.</CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="space-y-4 text-sm">
