@@ -1,7 +1,113 @@
 @import "tailwindcss";
 
-html,
-body,
-#root {
-  min-height: 100%;
+@theme {
+  --font-sans: "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+
+  --color-ivory-50: #fbfaf7;
+  --color-ivory-100: #f6f4ee;
+  --color-ivory-200: #ebe7dd;
+  --color-ivory-300: #ddd6c8;
+
+  --color-ink-900: #191820;
+  --color-ink-800: #2a2833;
+  --color-ink-700: #454252;
+  --color-ink-600: #625e70;
+  --color-ink-500: #807b8d;
+  --color-ink-400: #a29dab;
+  --color-ink-300: #c4bfc9;
+  --color-ink-200: #dedae1;
+  --color-ink-100: #efedf1;
+
+  --color-lavender-50: #f7f5ff;
+  --color-lavender-100: #eeeaff;
+  --color-lavender-200: #ddd5ff;
+  --color-lavender-300: #c4b5fd;
+  --color-lavender-400: #a78bfa;
+  --color-lavender-500: #8b5cf6;
+  --color-lavender-600: #7347d9;
+  --color-lavender-700: #5d37b0;
+
+  --shadow-soft: 0 1px 2px rgb(25 24 32 / 0.04), 0 12px 32px -18px rgb(25 24 32 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(25 24 32 / 0.04), 0 18px 40px -22px rgb(25 24 32 / 0.24);
+  --radius-card: 0.875rem;
+
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-rise: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background-color: var(--color-ivory-50);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-lavender-500);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--color-lavender-200);
+    color: var(--color-ink-900);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
