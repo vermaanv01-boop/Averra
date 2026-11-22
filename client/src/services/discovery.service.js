@@ -22,11 +22,11 @@ function getMatches(params = {}) {
   return api.get('/discovery/matches', { params: buildParams(params, MATCH_QUERY_KEYS) })
 }
 
-async function findUserSkills(username) {
+async function findUserSkills(username, types = SKILL_TYPES) {
   const skills = { teach: [], learn: [] }
   const normalizedUsername = username.toLowerCase()
 
-  for (const type of SKILL_TYPES) {
+  for (const type of types) {
     let page = 1
     let found = false
 
