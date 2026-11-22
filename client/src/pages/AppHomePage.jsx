@@ -28,7 +28,17 @@ export default function AppHomePage() {
       <PageHeader
         eyebrow="Overview"
         title={`Welcome back, ${firstName}.`}
-        description="Your Averra workspace is ready. Profile, discovery, and exchange tools will appear here as they are released."
+        description="Keep your profile current and manage the skills you teach and want to learn."
+        actions={
+          <>
+            <Link to="/app/profile" className={buttonStyles({ variant: 'secondary', size: 'sm' })}>
+              View profile
+            </Link>
+            <Link to="/app/skills" className={buttonStyles({ size: 'sm' })}>
+              Manage skills
+            </Link>
+          </>
+        }
       />
 
       <div className="grid gap-5 lg:grid-cols-2">
