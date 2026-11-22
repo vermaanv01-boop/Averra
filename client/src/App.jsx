@@ -11,6 +11,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import PublicProfilePage from './pages/PublicProfilePage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
+import SessionsPage from './pages/SessionsPage.jsx'
 import SkillsPage from './pages/SkillsPage.jsx'
 import ProtectedRoute from './routes/ProtectedRoute.jsx'
 import PublicOnlyRoute from './routes/PublicOnlyRoute.jsx'
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="app" element={<AppHomePage />} />
             <Route path="app/discovery" element={<DiscoveryPage />} />
             <Route path="app/profile" element={<ProfilePage />} />
+            <Route path="app/sessions" element={<SessionsPage />} />
             <Route path="app/skills" element={<SkillsPage />} />
             <Route path="app/users/:username" element={<PublicProfilePage />} />
           </Route>
