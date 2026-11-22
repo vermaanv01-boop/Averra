@@ -31,6 +31,9 @@ export default function AppHomePage() {
         description="Keep your profile current and manage the skills you teach and want to learn."
         actions={
           <>
+            <Link to="/app/discovery" className={buttonStyles({ variant: 'secondary', size: 'sm' })}>
+              Discover people
+            </Link>
             <Link to="/app/profile" className={buttonStyles({ variant: 'secondary', size: 'sm' })}>
               View profile
             </Link>
