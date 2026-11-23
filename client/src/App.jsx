@@ -40,6 +40,7 @@ export default function App() {
             <Route path="app" element={<AppHomePage />} />
             <Route path="app/discovery" element={<DiscoveryPage />} />
             <Route path="app/messages" element={<MessagesPage />} />
+            <Route path="app/notifications" element={<NotificationsPage />} />
             <Route path="app/profile" element={<ProfilePage />} />
             <Route path="app/sessions" element={<SessionsPage />} />
             <Route path="app/skills" element={<SkillsPage />} />
