@@ -172,6 +172,9 @@ export default function PublicProfilePage() {
       </Link>
 
       {notice && <Alert variant="success">{notice}</Alert>}
+      {reviewNotice && (
+        <Alert variant="info">Review activity is shown on this member's profile.</Alert>
+      )}
       {ownSkillsError && (
         <Alert variant="warning" title="Could not load your skills">
           Refresh the page before sending an exchange request.
