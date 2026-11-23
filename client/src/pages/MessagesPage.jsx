@@ -417,14 +417,14 @@ export default function MessagesPage() {
                     createdAt: message.createdAt
                   },
                   lastMessageAt: message.createdAt,
-                  unreadCount: isActive ? 0 : (conversation.unreadCount || 0) + 1
+                  unreadCount: isActive || isOwn ? 0 : (conversation.unreadCount || 0) + 1
                 }
               : conversation
           )
         )
-        if (!isActive) {
+        if (!isActive && !isOwn) {
           setUnreadCounts((previous) => ({ ...previous, [conversationId]: (previous[conversationId] || 0) + 1 }))
-        } else if (!document.hidden) {
+        } else if (isActive && !isOwn && !document.hidden) {
           markRead(conversationId)
         }
       }),
