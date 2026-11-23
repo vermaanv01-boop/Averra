@@ -14,5 +14,6 @@ function listParams(params = {}) {
 
 export const exchangeRequestService = {
   create: (values) => api.post('/exchange-requests', values),
-  list: (params = {}) => api.get('/exchange-requests', { params: listParams(params) })
+  list: (params = {}) => api.get('/exchange-requests', { params: listParams(params) }),
+  getById: (id) => api.get(`/exchange-requests/${encodeURIComponent(id)}`)
 }
