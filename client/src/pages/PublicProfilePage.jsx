@@ -211,7 +211,7 @@ export default function PublicProfilePage() {
 
       {notice && <Alert variant="success">{notice}</Alert>}
       {reviewNotice && (
-        <Alert variant="info">Review activity is shown on this member's profile.</Alert>
+        <Alert variant="info">Review activity is shown in the reputation section below.</Alert>
       )}
       {ownSkillsError && (
         <Alert variant="warning" title="Could not load your skills">
