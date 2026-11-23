@@ -54,6 +54,15 @@ export default function App() {
             <Route path="app/sessions" element={<SessionsPage />} />
             <Route path="app/skills" element={<SkillsPage />} />
             <Route path="app/users/:username" element={<PublicProfilePage />} />
+            <Route element={<AdminRoute />}>
+              <Route element={<AdminLayout />}>
+                <Route path="app/admin" element={<AdminDashboardPage />} />
+                <Route path="app/admin/users" element={<AdminUsersPage />} />
+                <Route path="app/admin/reviews" element={<AdminReviewsPage />} />
+                <Route path="app/admin/reports" element={<AdminReportsPage />} />
+                <Route path="app/admin/audit-logs" element={<AdminAuditLogsPage />} />
+              </Route>
+            </Route>
           </Route>
         </Route>
       </Route>
