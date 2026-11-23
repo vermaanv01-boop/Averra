@@ -155,7 +155,7 @@ export default function MessageThread({
 
       <MessageComposer
         disabled={Boolean(authError) || !connection || connection === 'error'}
-        sending={false}
+        sending={sending}
         onSend={onSend}
         onTypingStart={onTypingStart}
         onTypingStop={onTypingStop}
