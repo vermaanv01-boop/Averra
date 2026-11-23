@@ -44,6 +44,12 @@ export default function PublicProfilePage() {
   const [skillsError, setSkillsError] = useState(null)
   const [notice, setNotice] = useState('')
   const [exchangeOpen, setExchangeOpen] = useState(false)
+  const [reviewPage, setReviewPage] = useState(1)
+  const [reviewSort, setReviewSort] = useState('newest')
+  const [reviews, setReviews] = useState([])
+  const [reviewsPagination, setReviewsPagination] = useState(null)
+  const [reviewsLoading, setReviewsLoading] = useState(false)
+  const [reviewsError, setReviewsError] = useState(null)
 
   const reviewNotice = new URLSearchParams(location.search).get('review') === '1'
 
