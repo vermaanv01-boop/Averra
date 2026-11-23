@@ -22,7 +22,7 @@ export default function SessionCard({
 }) {
   const date = formatDateParts(session.scheduledDate)
   const meeting = formatMeeting(session)
-  const other = session.participants?.find((participant) => participant.id !== currentUserId)
+  const other = session.participants?.find((participant) => participant?.id && participant.id !== currentUserId)
   const isProposer = session.proposedBy?.id === currentUserId
   const canRespond = session.status === 'pending' && !isProposer
   const pendingProposal = session.reschedulingHistory?.find((proposal) => proposal.status === 'pending')
