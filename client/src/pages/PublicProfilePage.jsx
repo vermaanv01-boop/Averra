@@ -316,6 +316,8 @@ export default function PublicProfilePage() {
         </div>
       </section>
 
+      <ReputationSummary reputation={profile.reputation} />
+
       <div className="grid gap-5 xl:grid-cols-2">
         {SKILL_TYPES.map((type) => (
           <section
