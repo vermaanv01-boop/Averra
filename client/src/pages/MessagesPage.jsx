@@ -606,7 +606,7 @@ export default function MessagesPage() {
             authError={socket.authError}
             busy={busy}
             sending={sending}
-            onBack={() => setActiveId(null)}
+            onBack={closeConversation}
             onLoadOlder={() => loadMessages(activeId, 'older')}
             onSend={(content) => sendMessage(activeId, content)}
             onEdit={editMessage}
