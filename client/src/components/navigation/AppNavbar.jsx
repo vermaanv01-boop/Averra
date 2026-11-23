@@ -42,6 +42,9 @@ export default function AppNavbar() {
             <NavLink to="/app/discovery" className={navClass}>
               Discover
             </NavLink>
+            <NavLink to="/app/messages" className={navClass}>
+              Messages
+            </NavLink>
             <NavLink to="/app/profile" className={navClass}>
               Profile
             </NavLink>
