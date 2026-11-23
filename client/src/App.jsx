@@ -22,6 +22,7 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import ReviewsPage from './pages/ReviewsPage.jsx'
 import SessionsPage from './pages/SessionsPage.jsx'
 import SkillsPage from './pages/SkillsPage.jsx'
+import AdminRoute from './routes/AdminRoute.jsx'
 import ProtectedRoute from './routes/ProtectedRoute.jsx'
 import PublicOnlyRoute from './routes/PublicOnlyRoute.jsx'
 
