@@ -62,6 +62,7 @@ export default function AppNavbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          <NotificationBell />
           <div className="flex items-center gap-2.5">
             <Avatar name={user?.name} size="sm" />
             <div className="leading-tight">
