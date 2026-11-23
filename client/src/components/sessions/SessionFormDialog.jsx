@@ -4,6 +4,7 @@ import Button from '../ui/Button.jsx'
 import Input from '../ui/Input.jsx'
 import Modal from '../ui/Modal.jsx'
 import Select from '../ui/Select.jsx'
+import Spinner from '../ui/Spinner.jsx'
 import Textarea from '../ui/Textarea.jsx'
 import ScheduleConflictAlert from './ScheduleConflictAlert.jsx'
 import {
