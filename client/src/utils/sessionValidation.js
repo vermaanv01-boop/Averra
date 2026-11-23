@@ -1,5 +1,6 @@
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/
+const OBJECT_ID_PATTERN = /^[a-f\d]{24}$/i
 
 function asTrimmed(value) {
   return typeof value === 'string' ? value.trim() : ''
