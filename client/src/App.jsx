@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import AuthLayout from './layouts/AuthLayout.jsx'
+import AdminLayout from './layouts/AdminLayout.jsx'
 import AppLayout from './layouts/AppLayout.jsx'
 import PublicLayout from './layouts/PublicLayout.jsx'
 import RootLayout from './layouts/RootLayout.jsx'
