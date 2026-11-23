@@ -416,6 +416,8 @@ export default function SessionsPage() {
         mode={formDialog?.mode || 'create'}
         session={formDialog?.session || null}
         acceptedRequests={acceptedRequests}
+        requestsLoading={acceptedQuery.loading}
+        requestsError={acceptedQuery.error}
         currentUserId={user?.id}
         submitting={actions.busy}
         serverError={dialogError}
