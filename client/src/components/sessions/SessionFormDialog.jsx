@@ -122,6 +122,7 @@ export default function SessionFormDialog({
   const showLink = mode === 'create' && ['online', 'other'].includes(values.meetingMethod)
   const showLocation = mode === 'create' && ['in-person', 'other'].includes(values.meetingMethod)
   const hasAcceptedRequests = acceptedRequests.length > 0
+  const exchangesUnavailable = mode === 'create' && (requestsLoading || Boolean(requestsError) || !hasAcceptedRequests)
 
   return (
     <Modal
