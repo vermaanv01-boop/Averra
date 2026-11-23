@@ -399,6 +399,7 @@ export default function MessagesPage() {
         if (!message?.conversationId) return
         const conversationId = message.conversationId
         const isActive = conversationId === activeIdRef.current
+        const isOwn = senderId(message) === user?.id
         setThread((previous) =>
           previous.conversationId === conversationId
             ? { ...previous, messages: upsertMessage(previous.messages, message) }
