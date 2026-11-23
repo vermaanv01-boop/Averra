@@ -61,6 +61,11 @@ export default function AppNavbar() {
             <NavLink to="/app/skills" className={navClass}>
               Skills
             </NavLink>
+            {user?.role === 'admin' && (
+              <NavLink to="/app/admin" className={navClass}>
+                Admin
+              </NavLink>
+            )}
           </nav>
         </div>
 
