@@ -43,6 +43,7 @@ export default function App() {
             <Route path="app/messages" element={<MessagesPage />} />
             <Route path="app/notifications" element={<NotificationsPage />} />
             <Route path="app/profile" element={<ProfilePage />} />
+            <Route path="app/reviews" element={<ReviewsPage />} />
             <Route path="app/sessions" element={<SessionsPage />} />
             <Route path="app/skills" element={<SkillsPage />} />
             <Route path="app/users/:username" element={<PublicProfilePage />} />
