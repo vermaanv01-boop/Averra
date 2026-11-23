@@ -360,7 +360,7 @@ export default function SessionsPage() {
 
         {sessionsQuery.loading ? (
           <ResultsSkeleton />
-        ) : sessionsQuery.items.length === 0 ? (
+        ) : sessionsQuery.error ? null : sessionsQuery.items.length === 0 ? (
           <EmptyState
             title={emptyCopy.title}
             description={emptyCopy.description}
