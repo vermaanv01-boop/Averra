@@ -113,7 +113,7 @@ export default function MessageBubble({
         <div className={cn('flex items-center gap-2 px-1 text-[10px] text-ink-500', own && 'flex-row-reverse')}>
           <span>{formatMessageTime(message.createdAt)}</span>
           {message.editedAt && <span>edited</span>}
-          {own && !message.id && (
+          {own && !message.id && message.status === 'sending' && (
             <span className="inline-flex items-center gap-1">
               <Clock3 className="h-3 w-3" aria-hidden="true" /> Sending
             </span>
