@@ -1,4 +1,5 @@
 import { MessageSquareText, RefreshCw } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import EmptyState from '../common/EmptyState.jsx'
 import Alert from '../ui/Alert.jsx'
 import Button from '../ui/Button.jsx'
