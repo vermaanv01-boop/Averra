@@ -8,12 +8,16 @@ import Alert from '../components/ui/Alert.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
-import EmptyState from '../components/ui/EmptyState.jsx'
+import Select from '../components/ui/Select.jsx'
 import Spinner from '../components/ui/Spinner.jsx'
+import Pagination from '../components/discovery/Pagination.jsx'
+import ReviewCard from '../components/reviews/ReviewCard.jsx'
+import ReputationSummary from '../components/reviews/ReputationSummary.jsx'
 import useAuth from '../hooks/useAuth.js'
 import useSkills from '../hooks/useSkills.js'
-import { discoveryService, userService } from '../services/index.js'
+import { discoveryService, reviewService, userService } from '../services/index.js'
 import { SKILL_TYPES, SKILL_TYPE_LABELS } from '../utils/constants.js'
+import { REVIEW_SORT_OPTIONS } from '../utils/reviews.js'
 
 function toSkillMap(skills) {
   return {
