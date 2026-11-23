@@ -234,6 +234,36 @@ export default function MessagesPage() {
     [loadMessages, markRead, socket.setActiveConversation]
   )
 
+  const requestedConversation = searchParams.get('conversation')
+  const requestedMessage = searchParams.get('message')
+
+  useEffect(() => {
+    if (conversationsLoading || conversations.length === 0) return
+    if (!requestedConversation && !requestedMessage) return
+
+    const targetId =
+      requestedConversation ||
+      conversations.find((conversation) => conversation.lastMessage?.id === requestedMessage)?.id
+
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        next.delete('conversation')
+        next.delete('message')
+        return next
+      },
+      { replace: true }
+    )
+
+    if (!targetId || !conversations.some((conversation) => conversation.id === targetId)) {
+      setDeepLinkError('That conversation or message is no longer available.')
+      return
+    }
+
+    setDeepLinkError('')
+    openConversation(targetId)
+  }, [conversations, conversationsLoading, openConversation, requestedConversation, requestedMessage, setSearchParams])
+
   const closeConversation = useCallback(() => {
     const id = activeIdRef.current
     if (id) socket.emit(SOCKET_EVENTS.typingStop, { conversationId: id })
