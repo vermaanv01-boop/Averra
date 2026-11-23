@@ -60,6 +60,8 @@ export default function SessionFormDialog({
   mode = 'create',
   session,
   acceptedRequests = [],
+  requestsLoading = false,
+  requestsError = null,
   currentUserId,
   submitting = false,
   serverError,
