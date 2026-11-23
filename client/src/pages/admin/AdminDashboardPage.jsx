@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import PageHeader from '../components/common/PageHeader.jsx'
-import Alert from '../components/ui/Alert.jsx'
-import { buttonStyles } from '../components/ui/Button.jsx'
-import Spinner from '../components/ui/Spinner.jsx'
-import { adminService } from '../services/index.js'
+import PageHeader from '../../components/common/PageHeader.jsx'
+import Alert from '../../components/ui/Alert.jsx'
+import { buttonStyles } from '../../components/ui/Button.jsx'
+import Spinner from '../../components/ui/Spinner.jsx'
+import { adminService } from '../../services/index.js'
 import {
   auditActorName,
   auditTargetLabel,
   enumLabel,
   formatAdminError,
   formatTimestamp
-} from '../utils/admin.js'
+} from '../../utils/admin.js'
 
 const QUICK_LINKS = [
   { to: '/app/admin/users', label: 'Users' },
