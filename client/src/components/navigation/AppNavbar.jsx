@@ -130,6 +130,11 @@ export default function AppNavbar() {
             <NavLink to="/app/skills" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
               Skills
             </NavLink>
+            {user?.role === 'admin' && (
+              <NavLink to="/app/admin" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
+                Admin
+              </NavLink>
+            )}
             <div className="flex items-center gap-2.5 border-t border-ink-100 pt-3">
               <Avatar name={user?.name} size="sm" />
               <div className="min-w-0 leading-tight">
