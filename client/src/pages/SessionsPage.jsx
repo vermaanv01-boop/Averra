@@ -311,6 +311,11 @@ export default function SessionsPage() {
       {pageError && !formDialog && !cancelDialog && !confirmDialog && (
         <ScheduleConflictAlert error={pageError} />
       )}
+      {acceptedQuery.error && (
+        <Alert variant="warning" title="Accepted exchanges unavailable">
+          {acceptedQuery.error.message} Proposing a session requires an accepted exchange request.
+        </Alert>
+      )}
 
       <div
         role="tablist"
