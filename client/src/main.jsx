@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import { SocketProvider } from './contexts/SocketContext.jsx'
+import { NotificationProvider } from './contexts/NotificationContext.jsx'
 import ErrorBoundary from './routes/ErrorBoundary.jsx'
 import './index.css'
 
