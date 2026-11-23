@@ -127,9 +127,7 @@ export default function MessagesPage() {
           )
         )
         await refreshUnread()
-      } catch {
-        // Keep the locally cleared badge; the next refresh will reconcile it.
-      }
+      } catch {}
     },
     [refreshUnread, user?.id]
   )
