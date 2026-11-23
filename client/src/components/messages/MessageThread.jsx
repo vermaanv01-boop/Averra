@@ -25,6 +25,7 @@ export default function MessageThread({
   connection,
   authError,
   busy,
+  sending,
   onBack,
   onLoadOlder,
   onSend,
