@@ -14,7 +14,11 @@ export const SOCKET_EVENTS = {
   messageDeleted: 'message:deleted',
   messageRead: 'message:read',
   presenceOnline: 'presence:online',
-  presenceOffline: 'presence:offline'
+  presenceOffline: 'presence:offline',
+  notificationNew: 'notification:new',
+  notificationRead: 'notification:read',
+  notificationDeleted: 'notification:deleted',
+  notificationUnreadCount: 'notification:unread-count'
 }
 
 export function createMessagingSocket(token) {

@@ -16,7 +16,11 @@ const SERVER_LISTENERS = [
   SOCKET_EVENTS.typingStart,
   SOCKET_EVENTS.typingStop,
   SOCKET_EVENTS.presenceOnline,
-  SOCKET_EVENTS.presenceOffline
+  SOCKET_EVENTS.presenceOffline,
+  SOCKET_EVENTS.notificationNew,
+  SOCKET_EVENTS.notificationRead,
+  SOCKET_EVENTS.notificationDeleted,
+  SOCKET_EVENTS.notificationUnreadCount
 ]
 
 export function SocketProvider({ children }) {
