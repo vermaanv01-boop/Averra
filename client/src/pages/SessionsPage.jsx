@@ -130,6 +130,21 @@ export default function SessionsPage() {
     }
   }, [])
 
+  const requestedSession = searchParams.get('session')
+
+  useEffect(() => {
+    if (!requestedSession) return
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        next.delete('session')
+        return next
+      },
+      { replace: true }
+    )
+    loadDetail(requestedSession)
+  }, [loadDetail, requestedSession, setSearchParams])
+
   const closeDetail = useCallback(() => {
     setDetailId(null)
     setDetailSession(null)

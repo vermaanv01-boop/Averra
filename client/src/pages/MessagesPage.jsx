@@ -238,7 +238,7 @@ export default function MessagesPage() {
   const requestedMessage = searchParams.get('message')
 
   useEffect(() => {
-    if (conversationsLoading || conversations.length === 0) return
+    if (conversationsLoading) return
     if (!requestedConversation && !requestedMessage) return
 
     const targetId =
