@@ -115,7 +115,7 @@ export default function MessagesPage() {
                 ...previous,
                 messages: applyReadReceipt(previous.messages, {
                   messageIds: data?.messageIds || [],
-                  readBy: user?.id
+                  readBy: data?.readBy || user?.id
                 })
               }
             : previous
