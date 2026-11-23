@@ -38,10 +38,18 @@ export default function ProfilePage() {
         title="Your profile"
         description="Keep the details other members see accurate and up to date."
         actions={
-          <Button variant="secondary" size="sm" loading={refreshing} onClick={handleRefresh}>
-            <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            Refresh
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              to="/app/reviews"
+              className="inline-flex h-9 items-center rounded-lg border border-lavender-200 bg-lavender-50 px-3 text-xs font-medium text-lavender-700 transition-colors hover:bg-lavender-100"
+            >
+              Reviews & reputation
+            </Link>
+            <Button variant="secondary" size="sm" loading={refreshing} onClick={handleRefresh}>
+              <RefreshCw className="h-4 w-4" aria-hidden="true" />
+              Refresh
+            </Button>
+          </div>
         }
       />
 
