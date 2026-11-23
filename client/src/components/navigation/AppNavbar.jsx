@@ -76,16 +76,19 @@ export default function AppNavbar() {
           </Button>
         </div>
 
-        <button
-          type="button"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-ink-200 text-ink-700 transition-colors hover:bg-ivory-100 md:hidden"
-          aria-expanded={open}
-          aria-controls="app-mobile-nav"
-          aria-label={open ? 'Close navigation' : 'Open navigation'}
-          onClick={() => setOpen((value) => !value)}
-        >
-          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <NotificationBell />
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-ink-200 text-ink-700 transition-colors hover:bg-ivory-100"
+            aria-expanded={open}
+            aria-controls="app-mobile-nav"
+            aria-label={open ? 'Close navigation' : 'Open navigation'}
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
       </PageContainer>
 
       {open && (
