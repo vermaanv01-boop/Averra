@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { MessageSquareText } from 'lucide-react'
 import PageHeader from '../components/common/PageHeader.jsx'
 import Alert from '../components/ui/Alert.jsx'
 import Button from '../components/ui/Button.jsx'
@@ -149,12 +148,13 @@ export default function MessagesPage() {
 
     try {
       let page = 1
-      let payload = await conversationService.messages(conversationId, { page: 1, limit: PAGE_SIZE })
+      let payload
 
       if (mode === 'older') {
         page = Math.max(1, threadRef.current.page - 1)
         payload = await conversationService.messages(conversationId, { page, limit: PAGE_SIZE })
       } else {
+        payload = await conversationService.messages(conversationId, { page: 1, limit: PAGE_SIZE })
         const totalPages = payload?.pagination?.totalPages || 1
         if (totalPages > 1) {
           page = totalPages
