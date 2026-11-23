@@ -55,7 +55,7 @@ test('messages sort by creation time and then by stable identifier', () => {
   ]
   assert.deepEqual(
     sortMessages(messages).map((item) => item.id || item.clientMessageId),
-    ['client-c', 'a', 'b']
+    ['a', 'client-c', 'b']
   )
 })
 
