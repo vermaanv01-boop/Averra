@@ -123,9 +123,7 @@ export function notificationDestination(notification) {
   if (kind === 'ExchangeRequest') return { pathname: '/app', search: `?request=${encodeURIComponent(id)}` }
   if (kind === 'Session') return { pathname: '/app/sessions', search: `?session=${encodeURIComponent(id)}` }
   if (kind === 'Review') {
-    const username = actorUsername(notification)
-    if (!username) return null
-    return { pathname: `/app/users/${encodeURIComponent(username)}`, search: '?review=1' }
+    return { pathname: '/app/reviews', search: `?review=${encodeURIComponent(id)}` }
   }
   return null
 }
