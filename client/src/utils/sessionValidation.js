@@ -105,7 +105,7 @@ export function validateSessionForm(values = {}, mode = 'create') {
   const errors = {}
 
   if (mode === 'create') {
-    if (!normalized.exchangeRequestId) {
+    if (!OBJECT_ID_PATTERN.test(normalized.exchangeRequestId)) {
       errors.exchangeRequestId = 'Choose an accepted exchange request'
     }
     if (normalized.title.length < 2 || normalized.title.length > 120) {
