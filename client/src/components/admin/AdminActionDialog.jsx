@@ -12,6 +12,7 @@ export default function AdminActionDialog({
   confirmLabel,
   loading = false,
   error,
+  confirmVariant = 'danger',
   reasonConfig = {},
   onConfirm,
   onCancel
