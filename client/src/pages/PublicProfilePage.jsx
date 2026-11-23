@@ -40,6 +40,8 @@ export default function PublicProfilePage() {
   const [notice, setNotice] = useState('')
   const [exchangeOpen, setExchangeOpen] = useState(false)
 
+  const reviewNotice = new URLSearchParams(location.search).get('review') === '1'
+
   const passedSkills = useMemo(
     () => (Array.isArray(location.state?.skills) ? location.state.skills : []),
     [location.state]
