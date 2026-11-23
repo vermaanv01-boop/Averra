@@ -136,6 +136,31 @@ export default function PublicProfilePage() {
     }
   }, [username, missingTypesKey, initialSkills])
 
+  useEffect(() => {
+    if (!profile?.id) return undefined
+    let active = true
+    setReviewsLoading(true)
+    setReviewsError(null)
+
+    reviewService
+      .listForUser(profile.id, { page: reviewPage, limit: 5, sort: reviewSort })
+      .then((data) => {
+        if (!active) return
+        setReviews(Array.isArray(data?.reviews) ? data.reviews : [])
+        setReviewsPagination(data?.pagination || null)
+      })
+      .catch((error) => {
+        if (active) setReviewsError(error)
+      })
+      .finally(() => {
+        if (active) setReviewsLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [profile?.id, reviewPage, reviewSort])
+
   if (profileLoading) {
     return (
       <div className="animate-rise space-y-6">
