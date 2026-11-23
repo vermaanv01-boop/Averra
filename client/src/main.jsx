@@ -14,7 +14,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ErrorBoundary>
         <AuthProvider>
           <SocketProvider>
-            <App />
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
           </SocketProvider>
         </AuthProvider>
       </ErrorBoundary>
