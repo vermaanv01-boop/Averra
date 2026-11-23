@@ -98,9 +98,7 @@ export default function MessagesPage() {
             : conversation
         )
       )
-    } catch {
-      // Unread counts are supplementary; conversation state remains authoritative.
-    }
+    } catch {}
   }, [])
 
   useEffect(() => {
