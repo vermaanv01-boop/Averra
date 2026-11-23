@@ -345,6 +345,52 @@ export default function PublicProfilePage() {
         ))}
       </div>
 
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h3 className="text-lg text-ink-900">Reviews received</h3>
+            <p className="mt-1 text-xs text-ink-500">Visible feedback from completed exchanges.</p>
+          </div>
+          <Select
+            label="Sort reviews"
+            className="w-full sm:w-52"
+            value={reviewSort}
+            options={REVIEW_SORT_OPTIONS}
+            onChange={(event) => {
+              setReviewSort(event.target.value)
+              setReviewPage(1)
+            }}
+          />
+        </div>
+
+        {reviewsError && (
+          <Alert variant="error" title="Could not load reviews">
+            {reviewsError.message}
+          </Alert>
+        )}
+        {reviewsLoading ? (
+          <div className="grid h-24 place-items-center rounded-card border border-ink-200/80 bg-white">
+            <Spinner label="Loading reviews" />
+          </div>
+        ) : reviews.length === 0 ? (
+          <EmptyState
+            title="No reviews yet"
+            description="This member has not received any published reviews."
+          />
+        ) : (
+          <div className="space-y-3">
+            {reviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))}
+            <Pagination
+              pagination={reviewsPagination}
+              onPageChange={setReviewPage}
+              disabled={reviewsLoading}
+            />
+          </div>
+        )}
+      </section>
+
       <ExchangeRequestDialog
         open={exchangeOpen}
         recipient={{ id: profile.id, name: profile.name }}
