@@ -53,6 +53,7 @@ export default function MessagesPage() {
   const [sending, setSending] = useState(false)
   const [busy, setBusy] = useState(false)
   const [actionError, setActionError] = useState(null)
+  const [deepLinkError, setDeepLinkError] = useState('')
   const [deleteTarget, setDeleteTarget] = useState(null)
 
   const activeIdRef = useRef(null)
