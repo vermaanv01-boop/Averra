@@ -113,6 +113,9 @@ export default function AppNavbar() {
             <NavLink to="/app/notifications" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
               Notifications
             </NavLink>
+            <NavLink to="/app/reviews" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
+              Reviews
+            </NavLink>
             <NavLink to="/app/profile" className={({ isActive }) => cn(navClass({ isActive }), 'rounded-lg px-3 py-2.5')}>
               Profile
             </NavLink>
