@@ -88,9 +88,12 @@ test('notification destinations use the related entity type without inventing fi
   )
   assert.deepEqual(
     notificationDestination(notification({ relatedEntity: 'review-1', relatedEntityType: 'Review' })),
-    { pathname: '/app/users/friend', search: '?review=1' }
+    { pathname: '/app/reviews', search: '?review=review-1' }
   )
-  assert.equal(notificationDestination(notification({ relatedEntity: 'review-1', relatedEntityType: 'Review', actor: 'actor-id' })), null)
+  assert.deepEqual(
+    notificationDestination(notification({ relatedEntity: 'review-1', relatedEntityType: 'Review', actor: 'actor-id' })),
+    { pathname: '/app/reviews', search: '?review=review-1' }
+  )
   assert.equal(notificationDestination(notification({ relatedEntity: null })), null)
 })
 
