@@ -231,6 +231,16 @@ export default function MessagesPage() {
     [loadMessages, markRead, socket.setActiveConversation]
   )
 
+  const closeConversation = useCallback(() => {
+    const id = activeIdRef.current
+    if (id) socket.emit(SOCKET_EVENTS.typingStop, { conversationId: id })
+    activeIdRef.current = null
+    setActiveId(null)
+    socket.setActiveConversation(null)
+    setThread(emptyThread())
+    setActionError(null)
+  }, [socket.emit, socket.setActiveConversation])
+
   const sendMessage = useCallback(
     async (conversationId, content, existing = null) => {
       if (sendingRef.current) return false
