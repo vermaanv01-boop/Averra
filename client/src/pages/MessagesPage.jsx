@@ -600,6 +600,12 @@ export default function MessagesPage() {
         }
       />
 
+      {deepLinkError && (
+        <Alert variant="warning" title="Notification destination">
+          {deepLinkError}
+        </Alert>
+      )}
+
       {actionError && !deleteTarget && (
         <Alert variant="error" title="Message not sent">
           {actionError}
