@@ -154,7 +154,8 @@ export default function MessageThread({
       </div>
 
       <MessageComposer
-        disabled={Boolean(authError) || !connection || connection === 'error'}
+        key={conversation.id}
+        disabled={Boolean(authError)}
         sending={sending}
         onSend={onSend}
         onTypingStart={onTypingStart}
