@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { CircleCheck } from 'lucide-react'
 import PageHeader from '../components/common/PageHeader.jsx'
 import { buttonStyles } from '../components/ui/Button.jsx'
@@ -18,6 +18,7 @@ import { exchangeRequestService } from '../services/index.js'
 
 export default function AppHomePage() {
   const { user } = useAuth()
+  const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [requestId, setRequestId] = useState(null)
   const [requestDetail, setRequestDetail] = useState(null)
