@@ -33,9 +33,10 @@ export function formatDateParts(scheduledDate) {
     return { month: '—', day: '—', year: '' }
   }
   const [year, month, day] = scheduledDate.split('-')
-  const monthName = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
-    new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)))
-  )
+  const monthName = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    timeZone: 'UTC'
+  }).format(new Date(Date.UTC(Number(year), Number(month) - 1, Number(day))))
   return { month: monthName.toUpperCase(), day, year }
 }
 
