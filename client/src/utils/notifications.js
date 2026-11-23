@@ -104,6 +104,15 @@ export function actorImage(notification) {
   return actorObject(notification)?.profileImage || ''
 }
 
+export function actorSummary(notification) {
+  return {
+    id: actorId(notification),
+    name: actorName(notification),
+    username: actorUsername(notification),
+    profileImage: actorImage(notification)
+  }
+}
+
 export function notificationDestination(notification) {
   const id = notification?.relatedEntity
   const kind = notification?.relatedEntityType
