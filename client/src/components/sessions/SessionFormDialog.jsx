@@ -143,7 +143,7 @@ export default function SessionFormDialog({
             type="submit"
             form={formId}
             loading={submitting}
-            disabled={submitting || (mode === 'create' && !hasAcceptedRequests)}
+            disabled={submitting || exchangesUnavailable}
           >
             {mode === 'create' ? 'Send proposal' : 'Propose time'}
           </Button>
