@@ -60,6 +60,11 @@ export default function AppHomePage() {
 
   return (
     <div className="animate-rise space-y-10">
+      {location.state?.adminDenied && (
+        <Alert variant="warning" title="Administrator access required">
+          That area is limited to accounts with the admin role.
+        </Alert>
+      )}
       <PageHeader
         eyebrow="Overview"
         title={`Welcome back, ${firstName}.`}
