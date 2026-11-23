@@ -60,12 +60,12 @@ export default function ConversationList({
               title="No conversations yet"
               description="Conversations appear when an exchange request is accepted. Find a partner to get started."
               action={
-                <a
-                  href="/app/discovery"
+                <Link
+                  to="/app/discovery"
                   className="inline-flex h-9 items-center rounded-lg border border-ink-900 bg-ink-900 px-4 text-sm font-medium text-white transition-colors hover:bg-ink-800"
                 >
                   Discover people
-                </a>
+                </Link>
               }
             />
           </div>
