@@ -153,7 +153,19 @@ export default function SessionFormDialog({
       <form id={formId} onSubmit={handleSubmit} className="space-y-6">
         <ScheduleConflictAlert error={serverError} />
 
-        {mode === 'create' && !hasAcceptedRequests && (
+        {mode === 'create' && requestsLoading && (
+          <div className="grid h-24 place-items-center">
+            <Spinner label="Loading accepted exchanges" />
+          </div>
+        )}
+
+        {mode === 'create' && !requestsLoading && requestsError && (
+          <Alert variant="error" title="Could not load accepted exchanges">
+            {requestsError.message}
+          </Alert>
+        )}
+
+        {mode === 'create' && !requestsLoading && !requestsError && !hasAcceptedRequests && (
           <Alert variant="info" title="No accepted exchanges yet">
             Sessions can only be proposed for accepted exchange requests.
           </Alert>
