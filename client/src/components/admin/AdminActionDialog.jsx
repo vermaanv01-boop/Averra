@@ -47,7 +47,7 @@ export default function AdminActionDialog({
           <Button variant="ghost" disabled={loading} onClick={onCancel}>
             Cancel
           </Button>
-          <Button variant="danger" loading={loading} onClick={handleConfirm}>
+          <Button variant={confirmVariant} loading={loading} onClick={handleConfirm}>
             {confirmLabel}
           </Button>
         </div>
