@@ -82,6 +82,8 @@ export default function PublicProfilePage() {
     setProfileError(null)
     setNotice('')
     setExchangeOpen(false)
+    setReviewPage(1)
+    setReviewSort('newest')
 
     userService
       .getByUsername(username)
