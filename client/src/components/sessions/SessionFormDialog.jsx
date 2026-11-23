@@ -220,6 +220,7 @@ export default function SessionFormDialog({
           <Input
             label="Date"
             type="date"
+            min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)}
             value={values.scheduledDate}
             error={attempted ? errors.scheduledDate : ''}
             disabled={submitting}
