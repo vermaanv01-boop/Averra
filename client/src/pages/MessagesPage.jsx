@@ -40,6 +40,7 @@ function emptyThread(conversationId = null) {
 export default function MessagesPage() {
   const { user } = useAuth()
   const socket = useSocket()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const [conversations, setConversations] = useState([])
   const [conversationsLoading, setConversationsLoading] = useState(true)
